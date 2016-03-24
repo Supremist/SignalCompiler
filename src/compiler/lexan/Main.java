@@ -5,13 +5,13 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
-        /*try {
-            Parser ps = new Parser().loadConstants(new FileInputStream("constants.txt"))
-                    .writeConstants(new FileOutputStream("cons.txt", false));
+        try {
+            Parser ps = new Parser().loadKeywords(new FileInputStream("keywords.txt"));
+
         }
         catch (Exception ex){
             ex.printStackTrace();
-        }*/
+        }
         /*String[] arr = ":123 32".split(":");
         System.out.println("'" + arr[0] + "'");
         System.out.println("'" + arr[1] + "'");*/
