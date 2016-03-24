@@ -1,4 +1,6 @@
 *.iml
 out
+output
+input
 .idea
 .directory

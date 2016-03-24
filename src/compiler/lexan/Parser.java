@@ -37,6 +37,8 @@ public class Parser {
         identifiers = new ArrayList<>();
         delimiters = new ArrayList<>();
         constants = new ArrayList<>();
+        lexemes = new ArrayList<>();
+        buffer = new StringBuilder();
         //constants = new TreeMap<>();
         isEnd = true;
     }
@@ -118,6 +120,7 @@ public class Parser {
             //ex.printStackTrace();
             //Ignore, because one symbol was read correctly
         }
+        nextChar();
     }
 
     private void parseComment() throws ParseException{
@@ -127,12 +130,10 @@ public class Parser {
                 finisherPos++;
             nextChar();
         }
-        if (isEnd) {
-            if (finisherPos < COMMENT_FINISHER.length())
-                throw new ParseException("Comment not closed correctly");
+        if (isEnd && finisherPos < COMMENT_FINISHER.length()) {
+            throw new ParseException("Comment not closed correctly");
         }
-        else
-            nextChar();
+        isComment = false;
     }
 
     private void closeReader(){
@@ -148,6 +149,8 @@ public class Parser {
     public Parser parse(InputStream input) throws ParseException{
         reader = new BufferedReader(new InputStreamReader(input));
         isComment = false;
+        isEnd = false;
+        lexemes.clear();
         nextChar();
         while (!isEnd) {
             if (isComment)
@@ -179,7 +182,7 @@ public class Parser {
 
     public Parser loadDelimiters(InputStream input){
         delimiters = loadLines(input);
-        delimiters.add(COMMENT_FINISHER);
+        delimiters.add(COMMENT_STARTER);
         maxDelimiterSize = 0;
         for (String delimiter: delimiters){
             if (delimiter.length() > maxDelimiterSize)
