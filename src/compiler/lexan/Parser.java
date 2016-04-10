@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 /**
  * Created by supremist on 3/22/16.
  */
@@ -16,7 +17,7 @@ public class Parser {
     private List<Integer> lexemes;
     //private SortedMap<String, Complex> constants;
     private int maxDelimiterSize;
-    private List<String> constants;
+    private List<Double> constants;
     private char currentChar;
     private StringBuilder buffer;
     private boolean isEnd;
@@ -82,18 +83,20 @@ public class Parser {
         return index;
     }
 
-    private void parseConstant(){
+    private double parseConstant(){
         buffer.setLength(0);
         do{
             buffer.append(currentChar);
             nextChar();
         }while (!isEnd && Character.isDigit(currentChar));
-        lexemes.add(CONSTANT_OFFSET + addUniqueItem(buffer.toString(), constants));
+        return Double.valueOf(buffer.toString());
+        //lexemes.add(CONSTANT_OFFSET + addUniqueItem(buffer.toString(), constants));
     }
+
 
     private void parseDelimiter() throws ParseException{
         char[] charBuffer = new char[maxDelimiterSize];
-        int delimiterSize = maxDelimiterSize;
+        int delimiterSize;
         charBuffer[0] = currentChar;
         try {
             reader.mark(maxDelimiterSize);
@@ -157,8 +160,34 @@ public class Parser {
                 parseComment();
             else if (isDelimeterStart(String.valueOf(currentChar)))
                 parseDelimiter();
-            else if (Character.isDigit(currentChar))
-                parseConstant();
+            else if (Character.isDigit(currentChar)) {
+                double constant = parseConstant();
+                if(currentChar == '#'){
+                    nextChar();
+                    boolean isMinus = false;
+                    if(currentChar == '-'){
+                        isMinus = true;
+                        nextChar();
+                    }
+                    else if(currentChar == '+'){
+                        isMinus = false;
+                        nextChar();
+                    }
+                    if(Character.isDigit(currentChar)){
+                        constant /= parseConstant();
+                        if(isMinus)
+                            constant = -constant;
+                    }
+                    else
+                        throw new ParseException("Digit expected");
+                }
+                int index;
+                if ((index = constants.indexOf(constant)) == NOT_FOUND) {
+                    constants.add(constant);
+                    index = constants.size()-1;
+                }
+                lexemes.add(CONSTANT_OFFSET + index);
+            }
             else if (Character.isLetter(currentChar))
                 parseIdentifier();
             else if (Character.isWhitespace(currentChar))
@@ -193,7 +222,9 @@ public class Parser {
 
 
     public Parser writeConstants(OutputStream out){
-        writeLines(constants, out);
+        List<String> lines;
+        lines = constants.stream().map((i) -> i.toString()).collect(Collectors.toList());
+        writeLines(lines, out);
         return this;
     }
 
@@ -263,27 +294,3 @@ public class Parser {
         return lines;
     }
 }
-
-
-
-
-
-
-/*public Parser loadConstants(InputStream input){
-        List<String> lines = loadLines(input);
-        for (String line: lines) {
-            String[] values = line.split(":");
-            if (values.length == 2)
-                constants.put(values[0], new Complex().readFromStr(values[1]));
-        }
-        return this;
-    }
-
-    public Parser writeConstants(OutputStream out){
-        List<String> lines = new ArrayList<>();
-        for(String line: constants.keySet()){
-            lines.add(line + ":" + constants.get(line).toString());
-        }
-        writeLines(lines, out);
-        return this;
-    }*/

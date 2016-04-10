@@ -1,4 +1,6 @@
 *.iml
+*.docx
+*.pdf
 out
 output
 input
