@@ -34,7 +34,7 @@ public class Complex {
     }
 
     public Complex readFromStr(String str){
-        String[] values = str.split(" ");
+        String[] values = str.trim().split(" ");
         if (values.length == 2) {
             real = Double.parseDouble(values[0]);
             imagine = Double.parseDouble(values[1]);
