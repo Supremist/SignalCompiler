@@ -1,6 +1,7 @@
 package compiler.lexan;
 import java.io.*;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -15,12 +16,19 @@ public class Main {
         if (output.isEmpty())
             output = "output/";
         try {
-            Parser ps = new Parser().loadKeywords(new FileInputStream(input + "keywords.txt"))
-                    .loadDelimiters(new FileInputStream(input + "delimiters.txt"))
-                    .parse(new FileInputStream(input + "program.txt"))
-                    .writeLexems(new FileOutputStream(output + "result.txt", false))
-                    .writeConstants(new FileOutputStream(output + "constants.txt", false))
-                    .writeIdentifiers(new FileOutputStream(output + "identifiers.txt", false));
+            Grammar grammar = new Grammar().setKeywords(
+                    LinesSerializer.loadLines(new FileInputStream(input + "keywords.txt")))
+                    .setDelimiters(LinesSerializer.loadLines(new FileInputStream(input + "delimiters.txt")));
+            Parser parser = new Parser(grammar);
+            parser.parse(new FileInputStream(input + "program.txt"));
+            LinesSerializer.writeLines(
+                    parser.getTokens().stream().map(String::valueOf).collect(Collectors.toList()),
+                    new FileOutputStream(output + "result.txt", false));
+            LinesSerializer.writeLines(grammar.getConstants().stream()
+                            .map(String::valueOf).collect(Collectors.toList()),
+                    new FileOutputStream(output + "constants.txt", false));
+            LinesSerializer.writeLines(grammar.getIdentifiers(),
+                    new FileOutputStream(output + "identifiers.txt", false));
 
         }
         catch (Exception ex){

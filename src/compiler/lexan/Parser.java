@@ -11,36 +11,29 @@ import java.util.stream.Collectors;
 
 public class Parser {
     private BufferedReader reader;
-    private List<String> keywords;
-    private List<String> identifiers;
-    private List<String> delimiters;
-    private List<Integer> lexemes;
-    private int maxDelimiterSize;
-    private List<Double> constants;
+    private List<Token> tokens;
+    private Grammar grammar;
     private char currentChar;
+    private Position currentPosition;
     private StringBuilder buffer;
     private boolean isEnd;
     private boolean isComment;
-    private static final int NOT_FOUND = -1;
-    private static final int SINGLE_CHAR_OFFSET = 0;
-    private static final int DELIMITERS_OFFSET = 300;
-    private static final int KEYWORDS_OFFSET = 400;
-    private static final int CONSTANT_OFFSET = 500;
-    private static final int IDENTIFIER_OFFSET = 1000;
     private static final String COMMENT_STARTER = "(*";
     private static final String COMMENT_FINISHER = "*)";
 
 
 
     public Parser(){
-        keywords = new ArrayList<>();
-        identifiers = new ArrayList<>();
-        delimiters = new ArrayList<>();
-        constants = new ArrayList<>();
-        lexemes = new ArrayList<>();
+        grammar = new Grammar();
+        tokens = new ArrayList<>();
         buffer = new StringBuilder();
         //constants = new TreeMap<>();
         isEnd = true;
+    }
+
+    public Parser(Grammar grammar){
+        this();
+        setGrammar(grammar);
     }
 
     private void nextChar(){
@@ -48,6 +41,7 @@ public class Parser {
             int ch = reader.read();
             if (ch != -1){
                 currentChar = (char) ch;
+                currentPosition.nextSymbol();
             }
             else{
                 isEnd = true;
@@ -67,19 +61,10 @@ public class Parser {
         }while(!isEnd && Character.isLetterOrDigit(currentChar));
         String identifier = buffer.toString();
         int index;
-        if ((index = keywords.indexOf(identifier)) != NOT_FOUND)
-            lexemes.add(KEYWORDS_OFFSET + index);
+        if ((index = grammar.getKeywords().indexOf(identifier)) != -1)
+            addToken(Token.Type.KEYWORD, index);
         else
-            lexemes.add(IDENTIFIER_OFFSET + addUniqueItem(identifier, identifiers));
-    }
-
-    private<T> int addUniqueItem(T item, List<T> lines){
-        int index;
-        if((index = lines.indexOf(item)) == NOT_FOUND){
-            lines.add(item);
-            index = lines.size()-1;
-        }
-        return index;
+            addToken(Token.Type.IDENTIFIER, Grammar.addUniqueItem(identifier, grammar.getIdentifiers()));
     }
 
     private double parseDigits(){
@@ -93,22 +78,23 @@ public class Parser {
 
 
     private void parseDelimiter() throws ParseException{
-        char[] charBuffer = new char[maxDelimiterSize];
+        int maxSize = grammar.getMaxDelimiterSize();
+        char[] charBuffer = new char[maxSize];
         int delimiterSize;
         charBuffer[0] = currentChar;
         try {
-            reader.mark(maxDelimiterSize);
-            delimiterSize = reader.read(charBuffer, 1, maxDelimiterSize-1);
+            reader.mark(maxSize);
+            delimiterSize = reader.read(charBuffer, 1, maxSize-1);
             if (delimiterSize == -1)
                 delimiterSize = 1;
             else
                 delimiterSize += 1;
             reader.reset();
-            int delimiterIndex = findDelimiter(String.copyValueOf(charBuffer,0,delimiterSize));
+            int delimiterIndex = grammar.findDelimiter(String.copyValueOf(charBuffer,0,delimiterSize));
             if (addDelimiter(delimiterIndex))
-                reader.skip(delimiters.get(delimiterIndex).length()-1);
+                reader.skip(grammar.getDelimiters().get(delimiterIndex).length()-1);
             else
-                throw new ParseException("Unexpected symbol");
+                throw new ParseException("Unexpected symbol", currentPosition);
         }
         catch(IOException ex){
             //ex.printStackTrace();
@@ -119,16 +105,20 @@ public class Parser {
 
     private boolean addDelimiter(int delimiterIndex){
         if (delimiterIndex >= 0){
-            String delimiter = delimiters.get(delimiterIndex);
+            String delimiter = grammar.getDelimiters().get(delimiterIndex);
             if (delimiter.equals(COMMENT_STARTER))
                 isComment = true;
             else if (delimiter.length() == 1)
-                lexemes.add(SINGLE_CHAR_OFFSET + delimiterIndex);
+                addToken(Token.Type.SINGLE_CHAR, delimiterIndex);
             else
-                lexemes.add(DELIMITERS_OFFSET + delimiterIndex);
+                addToken(Token.Type.DELIMITER, delimiterIndex);
             return true;
         }
         return false;
+    }
+
+    private void addToken(Token.Type type, int index){
+        tokens.add(new Token(type, currentPosition, index));
     }
 
     private void parseComment() throws ParseException{
@@ -139,7 +129,7 @@ public class Parser {
             nextChar();
         }
         if (isEnd && finisherPos < COMMENT_FINISHER.length()) {
-            throw new ParseException("Comment not closed correctly");
+            throw new ParseException("Comment not closed correctly", currentPosition);
         }
         isComment = false;
     }
@@ -173,133 +163,50 @@ public class Parser {
                     constant = -constant;
             }
             else
-                throw new ParseException("Digit expected");
+                throw new ParseException("Digit expected", currentPosition);
         }
-        lexemes.add(CONSTANT_OFFSET + addUniqueItem(constant, constants));
+        addToken(Token.Type.CONSTANT, Grammar.addUniqueItem(constant, grammar.getConstants()));
     }
 
     public Parser parse(InputStream input) throws ParseException{
         reader = new BufferedReader(new InputStreamReader(input));
+        currentPosition = new Position(1, 0);
         isComment = false;
         isEnd = false;
-        lexemes.clear();
+        tokens.clear();
         nextChar();
         while (!isEnd) {
             if (isComment)
                 parseComment();
-            else if (isDelimeterStart(String.valueOf(currentChar)))
+            else if (grammar.isDelimiterStart(String.valueOf(currentChar)))
                 parseDelimiter();
             else if (Character.isDigit(currentChar))
                 parseConstant();
             else if (Character.isLetter(currentChar))
                 parseIdentifier();
+            else if (currentChar == '\n') {
+                currentPosition.nextLine();
+                nextChar();
+            }
             else if (Character.isWhitespace(currentChar))
                 nextChar();
             else
-                throw new ParseException("Unknown symbol");
+                throw new ParseException("Unknown symbol", currentPosition);
         }
         closeReader();
         return this;
     }
 
-    public Parser loadKeywords(InputStream input){
-        keywords = loadLines(input);
+    public List<Token> getTokens(){
+        return tokens;
+    }
+
+    public Parser setGrammar(Grammar grammar){
+        this.grammar = grammar;
+        this.grammar.getDelimiters().add(COMMENT_STARTER);
         return this;
     }
 
-    public Parser loadIdentifiers(InputStream input){
-        identifiers = loadLines(input);
-        return this;
-    }
+    public Grammar getGrammar(){ return grammar;}
 
-    public Parser loadConstants(InputStream input){
-        constants = loadLines(input).stream().map(
-                Double::valueOf).collect(Collectors.toList());
-        return this;
-    }
-
-    public Parser loadDelimiters(InputStream input){
-        delimiters = loadLines(input);
-        delimiters.add(COMMENT_STARTER);
-        maxDelimiterSize = 0;
-        for (String delimiter: delimiters){
-            if (delimiter.length() > maxDelimiterSize)
-                maxDelimiterSize = delimiter.length();
-        }
-        return this;
-    }
-
-    public Parser writeConstants(OutputStream out){
-        List<String> lines;
-        lines = constants.stream().map(
-                (i) -> i.toString()).collect(Collectors.toList());
-        writeLines(lines, out);
-        return this;
-    }
-
-    public Parser writeIdentifiers(OutputStream out){
-        writeLines(identifiers, out);
-        return this;
-    }
-
-    public Parser writeLexems(OutputStream out){
-        StringBuilder builder = new StringBuilder();
-        for (Integer lexeme: lexemes) {
-            builder.append(lexeme);
-            builder.append(" ");
-        }
-        List<String> set = new ArrayList<>();
-        set.add(builder.toString());
-        writeLines(set, out);
-        return this;
-    }
-
-    private int findDelimiter(String string){
-        int index = -1;
-        for(int i = 0; i<delimiters.size(); ++i){
-            if (string.startsWith(delimiters.get(i)) &&
-                    (index == -1 || delimiters.get(i).length() > delimiters.get(index).length()))
-                index = i;
-        }
-        return index;
-    }
-
-    private boolean isDelimeterStart(String delimeter){
-        for(int i = 0; i<delimiters.size(); ++i){
-            if(delimiters.get(i).startsWith(delimeter))
-                return true;
-        }
-        return false;
-    }
-
-    private void writeLines(List<String> lines, OutputStream out){
-        Writer writer = null;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(out));
-            for (String line: lines){
-                writer.write(line);
-                writer.write('\n');
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            try {writer.close();} catch (Exception ex) {/*ignore*/}
-        }
-    }
-
-    private List<String> loadLines(InputStream input){
-        String line;
-        List<String> lines = new ArrayList<>();
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(input))){
-            while((line = reader.readLine()) != null){
-                if (!line.isEmpty() && !lines.contains(line))
-                    lines.add(line);
-            }
-        }
-        catch(Exception error){
-            error.printStackTrace();
-        }
-        return lines;
-    }
 }
