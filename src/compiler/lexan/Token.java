@@ -6,7 +6,7 @@ import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
  * Created by supremist on 4/11/16.
  */
 public class Token {
-    enum Type {SINGLE_CHAR, DELIMITER, KEYWORD, CONSTANT, IDENTIFIER}
+    public enum Type {SINGLE_CHAR, DELIMITER, KEYWORD, CONSTANT, IDENTIFIER}
 
     public static final int SINGLE_CHAR_OFFSET = 0;
     public static final int DELIMITERS_OFFSET = 300;
