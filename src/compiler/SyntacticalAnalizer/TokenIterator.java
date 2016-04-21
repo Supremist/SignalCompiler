@@ -1,9 +1,11 @@
 package compiler.SyntacticalAnalizer;
 
 import compiler.lexan.ParseException;
+import compiler.lexan.Position;
 import compiler.lexan.Token;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 /**
@@ -11,23 +13,39 @@ import java.util.ListIterator;
  */
 public class TokenIterator {
 
-    private Token current;
-    private Iterator<Token> iterator;
+    private List<Token> list;
+    private int current;
+    private int savedPos;
 
-    public TokenIterator (Iterator<Token> iterator){
-        this.iterator = iterator;
+    public TokenIterator (List<Token> list){
+        this.list = list;
+        savedPos = current = -1;
     }
 
     public Token next() throws ParseException{
-        if (iterator.hasNext()) {
-            current = iterator.next();
-            return current;
-        }
+        Token result = getNext();
+        current++;
+        return result;
+    }
+
+    public Token getNext() throws ParseException{
+        if (hasNext())
+            return list.get(current+1);
+        else if(current>0)
+            throw new ParseException("Unexpected end", list.get(current).getPosition());
         else
-            throw new ParseException("Unexpected end", current.getPosition());
+            throw new ParseException("Unexpected end", new Position());
     }
 
     public boolean hasNext(){
-        return iterator.hasNext();
+        return current<list.size()-1;
+    }
+
+    public void savePosition(){
+        savedPos = current;
+    }
+
+    public void seekBack(){
+        current = savedPos;
     }
 }

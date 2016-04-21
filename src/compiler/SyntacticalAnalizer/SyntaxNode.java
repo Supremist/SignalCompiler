@@ -3,40 +3,21 @@ package compiler.SyntacticalAnalizer;
 import compiler.lexan.ParseException;
 import compiler.lexan.Token;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /**
- * Created by supremist on 4/10/16.
+ * Created by supremist on 4/12/16.
  */
+public abstract class SyntaxNode extends TreeNode {
 
-public abstract class SyntaxNode  {
-    private List<SyntaxNode> children;
-    private SyntaxNode parent;
-    private Token token;
-    
-    public SyntaxNode(){
-        children = new ArrayList<>();
+    public TokenNode parseTokenNode(TokenIterator iterator) throws ParseException{
+        TokenNode node = new TokenNode(iterator);
+        addChild(node);
+        return node;
     }
 
-    abstract public void parse(TokenIterator iterator) throws ParseException;
-
-    public void parseExactToken(TokenIterator iterator, int tokenId) throws ParseException{
-        Token current = iterator.next();
-        if (current.getId() != tokenId)
-            throw new ParseException(String.format("Token %d expected", tokenId), current.getPosition());
-        
+    public TokenNode parseExactTokenNode(TokenIterator iterator, int tokenId) throws ParseException{
+        TokenNode node = parseTokenNode(iterator);
+        if (node.getToken().getId() != tokenId)
+            throw new ParseException(String.format("Token with id %d expected", tokenId), node.getToken().getPosition());
+        return node;
     }
-
-    public void addChild(SyntaxNode child){
-        children.add(child);
-        child.parent = this;
-    }
-    
-    public SyntaxNode getParent(){return parent;}
-    public List<SyntaxNode> getChildren(){return children;}
-    public Token getToken(){return token;}
-    public void setToken(Token token){this.token = token;}
-
 }

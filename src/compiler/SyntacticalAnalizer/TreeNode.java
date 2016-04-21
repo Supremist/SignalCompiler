@@ -1,32 +1,39 @@
 package compiler.SyntacticalAnalizer;
 
+import compiler.lexan.ParseException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by supremist on 4/10/16.
  */
-public class TreeNode<T> {
-    private T data;
-    private TreeNode<T> parent;
-    private List<TreeNode<T>> children;
 
+public abstract class TreeNode {
+    private List<TreeNode> children;
+    private TreeNode parent;
+    
     public TreeNode(){
         children = new ArrayList<>();
     }
 
-    public TreeNode(T data){
+    public TreeNode(TokenIterator iterator) throws ParseException{
         this();
-        setData(data);
+        parse(iterator);
     }
 
-    public void add(TreeNode<T> item){
-        children.add(item);
-        item.parent = this;
+    abstract public TreeNode parse(TokenIterator iterator) throws ParseException;
+
+    public void addChild(TreeNode child){
+        children.add(child);
+        child.parent = this;
     }
 
-    public void setData(T data){this.data = data;}
-    public T getData(){return data;}
-    public TreeNode<T> getParent(){return parent;}
-    public List<TreeNode<T>> getChildren(){return children;}
+    public void clearChildren(){
+        children.clear();
+    }
+    
+    public TreeNode getParent(){return parent;}
+    public List<TreeNode> getChildren(){return children;}
+
 }
