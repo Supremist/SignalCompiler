@@ -1,4 +1,7 @@
 package compiler.lexan;
+import compiler.SyntacticalAnalizer.Program;
+import compiler.SyntacticalAnalizer.TokenIterator;
+
 import java.io.*;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -30,6 +33,10 @@ public class Main {
             LinesSerializer.writeLines(grammar.getIdentifiers(),
                     new FileOutputStream(output + "identifiers.txt", false));
 
+            Program pr = new Program();
+            pr.parse(new TokenIterator(parser.getTokens()));
+            pr.setLevel(0);
+            System.out.print(pr.toStringTree().toString());
         }
         catch (Exception ex){
             ex.printStackTrace();

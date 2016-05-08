@@ -36,6 +36,10 @@ public class Token {
         this.id = id;
     }
 
+    public static Token fromId(int id){
+        return new Token(id, new Position());
+    }
+
     public static Type getTypeById(int id) throws ValueException{
         if(id < 0)
             throw new ValueException("Value error: id < 0");
@@ -47,6 +51,10 @@ public class Token {
             else
                 return Type.values()[index-1];
         }
+    }
+
+    public boolean equals(Token other){
+        return this.getId() == other.getId();
     }
 
     public Type getType(){return type;}

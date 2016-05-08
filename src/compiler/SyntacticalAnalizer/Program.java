@@ -7,6 +7,7 @@ import compiler.lexan.ParseException;
  */
 public class Program extends NamedTreeNode {
 
+    @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException{
         clearChildren();
         TokenNode node = parseTokenNode(iterator);

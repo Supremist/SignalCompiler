@@ -5,15 +5,15 @@ import compiler.lexan.ParseException;
 /**
  * Created by supremist on 4/13/16.
  */
-public class Declaration extends SyntaxNode {
+public class Declaration extends TreeNode{
 
     private SyntaxList<NamedTreeNode> variables;
     private SyntaxList<Attribute> attributes;
 
     public Declaration(){
         super();
-        variables = new SyntaxList<>(NamedTreeNode.class, 3); // separator = ","
-        attributes = new SyntaxList<>(Attribute.class); // separator = None
+        variables = new SyntaxList<>(NamedTreeNode.class, SyntaxList.CommaSeparetor.class); // separator = ","
+        attributes = new SyntaxList<>(Attribute.class, SyntaxList.EmptySeparator.class); // separator = None
     }
 
     public TreeNode parse(TokenIterator iterator) throws ParseException{
@@ -25,5 +25,10 @@ public class Declaration extends SyntaxNode {
         addChild(attributes);
         parseExactTokenNode(iterator, 0); // ";"
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }
