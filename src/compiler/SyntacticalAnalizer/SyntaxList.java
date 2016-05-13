@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class SyntaxList<T extends TreeNode> extends TreeNode{
 
-    public class CommaSeparetor extends TokenNode{
+    public class CommaSeparator extends TokenNode{
 
-        public CommaSeparetor(TokenIterator iterator) throws ParseException {
+        public CommaSeparator(TokenIterator iterator) throws ParseException {
             super(iterator);
         }
 
@@ -20,7 +20,7 @@ public class SyntaxList<T extends TreeNode> extends TreeNode{
         public TreeNode parse(TokenIterator iterator)throws ParseException{
             super.parse(iterator);
             if(getToken().getId() != 3) // ","
-                throw new ParseException("Coma expected ", getToken().getPosition());
+                throw new ParseException("Comma expected ", getToken().getPosition());
             return this;
         }
     }
@@ -74,7 +74,7 @@ public class SyntaxList<T extends TreeNode> extends TreeNode{
         if (!isCorrect)
             throw new ParseException("List should have at least one element ", iterator.getNext().getPosition());
         while ( isCorrect && parseSeparator(iterator)){
-            if (isCorrect = parseItem(iterator))
+            if ((isCorrect = parseItem(iterator)) && separatorClass != null)
                 throw new ParseException("Next list item expected ", iterator.getNext().getPosition());
         }
         return this;

@@ -1,5 +1,7 @@
 package compiler.SyntacticalAnalizer;
 
+import compiler.SyntacticalAnalizer.Declarations.Procedure;
+import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclaration;
 import compiler.lexan.ParseException;
 
 /**
@@ -7,21 +9,23 @@ import compiler.lexan.ParseException;
  */
 public class Program extends NamedTreeNode {
 
+    private Block block;
+    private Procedure procedure;
+
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException{
         clearChildren();
-        TokenNode node = parseTokenNode(iterator);
-        parseIdentifier(iterator);
-        if(node.getToken().getId() == 401) { //PROCEDURE
-            //TODO Parse ParamList, Block
+        if(iterator.getNext().getId() == 401) { //PROCEDURE
+            procedure = parseChild(iterator, Procedure.class);
+            block = parseChild(iterator, Block.class);
             parseExactTokenNode(iterator, 0); // ;
         }
-        else if(node.getToken().getId() == 400) { //PROGRAM
-            //TODO Parse Block
-            Declaration dec = new Declaration();
-            dec.parse(iterator);
-            addChild(dec);
-            parseExactTokenNode(iterator, 0); // ;
+        else if(iterator.getNext().getId() == 400) { //PROGRAM
+            parseChild(iterator, TokenNode.class);
+            parseIdentifier(iterator);
+            parseExactTokenNode(iterator, 0); // ";"
+            block = parseChild(iterator, Block.class);
+            parseExactTokenNode(iterator, 7); // "."
         }
         return this;
     }

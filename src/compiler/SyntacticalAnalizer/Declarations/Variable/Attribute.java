@@ -1,12 +1,16 @@
-package compiler.SyntacticalAnalizer;
+package compiler.SyntacticalAnalizer.Declarations.Variable;
 
+import compiler.SyntacticalAnalizer.SyntaxList;
+import compiler.SyntacticalAnalizer.TokenIterator;
+import compiler.SyntacticalAnalizer.TokenNode;
+import compiler.SyntacticalAnalizer.TreeNode;
 import compiler.lexan.ParseException;
 
 /**
  * Created by supremist on 4/13/16.
  */
 
-public class Attribute extends TreeNode{
+public class Attribute extends TreeNode {
     public enum Type {SIGNAL, COMPLEX, INTEGER, FLOAT, BLOCKFLOAT, EXT, RANGE}
 
     private Type type;
@@ -14,7 +18,7 @@ public class Attribute extends TreeNode{
 
     public Attribute (){
         super();
-        ranges = new SyntaxList<>(Range.class, SyntaxList.CommaSeparetor.class); // separator = ","
+        ranges = new SyntaxList<>(Range.class, SyntaxList.CommaSeparator.class); // separator = ","
     }
 
     public Type getType(){return type;}

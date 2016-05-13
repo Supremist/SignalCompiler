@@ -1,12 +1,15 @@
-package compiler.SyntacticalAnalizer;
+package compiler.SyntacticalAnalizer.Declarations.Variable;
 
+import compiler.SyntacticalAnalizer.TokenIterator;
+import compiler.SyntacticalAnalizer.TokenNode;
+import compiler.SyntacticalAnalizer.TreeNode;
 import compiler.lexan.ParseException;
 import compiler.lexan.Token;
 
 /**
  * Created by supremist on 4/17/16.
  */
-public class Range extends TreeNode{
+public class Range extends TreeNode {
 
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {

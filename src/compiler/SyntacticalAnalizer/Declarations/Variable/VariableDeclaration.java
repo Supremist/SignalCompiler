@@ -1,18 +1,22 @@
-package compiler.SyntacticalAnalizer;
+package compiler.SyntacticalAnalizer.Declarations.Variable;
 
+import compiler.SyntacticalAnalizer.NamedTreeNode;
+import compiler.SyntacticalAnalizer.SyntaxList;
+import compiler.SyntacticalAnalizer.TokenIterator;
+import compiler.SyntacticalAnalizer.TreeNode;
 import compiler.lexan.ParseException;
 
 /**
  * Created by supremist on 4/13/16.
  */
-public class Declaration extends TreeNode{
+public class VariableDeclaration extends TreeNode {
 
     private SyntaxList<NamedTreeNode> variables;
     private SyntaxList<Attribute> attributes;
 
-    public Declaration(){
+    public VariableDeclaration(){
         super();
-        variables = new SyntaxList<>(NamedTreeNode.class, SyntaxList.CommaSeparetor.class); // separator = ","
+        variables = new SyntaxList<>(NamedTreeNode.class, SyntaxList.CommaSeparator.class); // separator = ","
         attributes = new SyntaxList<>(Attribute.class, SyntaxList.EmptySeparator.class); // separator = None
     }
 

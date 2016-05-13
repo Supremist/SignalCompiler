@@ -11,7 +11,9 @@ public class Expression extends TreeNode{
 
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
-        AddInstruction sign = new AddInstruction();
+        if (iterator.getNext().getId() == 2) // '-'
+            parseChild(iterator, AddInstruction.class);
+        parseChild(iterator, SummandList.class);
         return this;
     }
 }

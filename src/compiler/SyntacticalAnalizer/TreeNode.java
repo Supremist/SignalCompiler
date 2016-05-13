@@ -2,10 +2,8 @@ package compiler.SyntacticalAnalizer;
 
 import com.sun.deploy.util.StringUtils;
 import compiler.lexan.ParseException;
-import compiler.lexan.Token;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
