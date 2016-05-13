@@ -36,7 +36,8 @@ public class Main {
             Program pr = new Program();
             pr.parse(new TokenIterator(parser.getTokens()));
             pr.setLevel(0);
-            System.out.print(pr.toStringTree().toString());
+            //System.out.print(pr.toStringTree(parser.getGrammar()).toString());
+            System.out.print(pr.toXmlView(parser.getGrammar()).toString());
         }
         catch (Exception ex){
             ex.printStackTrace();

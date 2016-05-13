@@ -66,6 +66,18 @@ public class Token {
         return String.valueOf(id)+" "+position.toString();
     }
 
+    public String findView(Grammar grammar){
+        if (type == Type.SINGLE_CHAR || type == Type.DELIMITER)
+            return grammar.getDelimiters().get(index);
+        if(type == Type.KEYWORD)
+            return grammar.getKeywords().get(index);
+        if (type == Type.CONSTANT)
+            return String.valueOf(grammar.getConstants().get(index));
+        if (type == Type.IDENTIFIER)
+            return grammar.getIdentifiers().get(index);
+        return "";
+    }
+
     public static Token fromString(String line){
         String[] values = line.split(" ");
         return new Token(Integer.valueOf(values[0]),

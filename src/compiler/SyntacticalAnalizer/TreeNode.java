@@ -1,6 +1,7 @@
 package compiler.SyntacticalAnalizer;
 
 import com.sun.deploy.util.StringUtils;
+import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
 
 import java.io.Serializable;
@@ -29,7 +30,7 @@ public abstract class TreeNode implements Serializable{
 
     abstract public TreeNode parse(TokenIterator iterator) throws ParseException;
     public String toString(){
-        return this.getClass().toString();
+        return this.getClass().getSimpleName();
     }
 
     public boolean tryParse(TokenIterator iterator){
@@ -81,18 +82,42 @@ public abstract class TreeNode implements Serializable{
         return node;
     }
 
-    public StringBuilder toStringTree(){
+    protected StringBuilder getLevelWhitespace(){
         StringBuilder buffer = new StringBuilder();
         if (level > 0){
             char[] chars = new char[level];
             Arrays.fill(chars, ' ');
             buffer.append(chars);
         }
+        return buffer;
+    }
+
+    public StringBuilder toStringTree(Grammar grammar){
+        StringBuilder buffer = getLevelWhitespace();
         buffer.append(toString());
         buffer.append('\n');
         for (TreeNode child:children) {
-            buffer.append(child.toStringTree());
+            buffer.append(child.toStringTree(grammar));
         }
+        return buffer;
+    }
+
+    public StringBuilder toXmlView(Grammar grammar){
+        StringBuilder buffer = getLevelWhitespace();
+        buffer.append("<").append(getClass().getSimpleName())
+                .append(getXmlAttrs(grammar))
+                .append(">\n");
+        for(TreeNode child: children){
+            buffer.append(child.toXmlView(grammar));
+        }
+        buffer.append(getLevelWhitespace())
+                .append("</").append(getClass().getSimpleName()).append(">\n");
+        return buffer;
+    }
+
+    public StringBuilder getXmlAttrs(Grammar grammar){
+        StringBuilder buffer = new StringBuilder();
+        //can add here some attributes to show in xml view
         return buffer;
     }
 

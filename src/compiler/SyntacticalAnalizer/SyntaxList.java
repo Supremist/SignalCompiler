@@ -1,5 +1,6 @@
 package compiler.SyntacticalAnalizer;
 
+import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
 
 import java.util.ArrayList;
@@ -83,5 +84,12 @@ public class SyntaxList<T extends TreeNode> extends TreeNode{
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    @Override
+    public StringBuilder getXmlAttrs(Grammar grammar){
+        StringBuilder buffer = super.getXmlAttrs(grammar);
+        buffer.append(" childType=\"").append(itemClass.getSimpleName()).append("\"");
+        return buffer;
     }
 }
