@@ -15,8 +15,7 @@ public class MultiplicationInstruction extends ListedTokenNode{
     private static Integer [] MULTIPLICATION_INSTRUCTIONS  = {11, 12, 13, 314}; // "*", "/", "&", "MOD"
 
     public MultiplicationInstruction() throws ParseException {
-        super(Arrays.asList(MULTIPLICATION_INSTRUCTIONS).stream()
-                        .map(Token::fromId).collect(Collectors.toList()),
+        super(Arrays.asList(MULTIPLICATION_INSTRUCTIONS),
                 "Multiplication instruction expected ");
     }
 }

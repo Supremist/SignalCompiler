@@ -1,9 +1,6 @@
 package compiler.SyntacticalAnalizer.Declarations.Variable;
 
-import compiler.SyntacticalAnalizer.SyntaxList;
-import compiler.SyntacticalAnalizer.TokenIterator;
-import compiler.SyntacticalAnalizer.TokenNode;
-import compiler.SyntacticalAnalizer.TreeNode;
+import compiler.SyntacticalAnalizer.*;
 import compiler.lexan.ParseException;
 
 /**
@@ -18,7 +15,7 @@ public class Attribute extends TreeNode {
 
     public Attribute (){
         super();
-        ranges = new SyntaxList<>(Range.class, SyntaxList.CommaSeparator.class); // separator = ","
+        ranges = new SyntaxList<>(Range.class, CommaSeparator.class); // separator = ","
     }
 
     public Type getType(){return type;}

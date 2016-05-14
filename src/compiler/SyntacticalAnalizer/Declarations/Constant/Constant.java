@@ -23,7 +23,7 @@ public class Constant extends TreeNode {
         else
             isMinus = false;
 
-        if (iterator.getNext().getId() == 17) { // symbol '
+        if (iterator.getNext().getId() == 8) { // symbol '
             complexConstant = parseChild(iterator, ComplexConstant.class);
             unsignedConstant= null;
         }

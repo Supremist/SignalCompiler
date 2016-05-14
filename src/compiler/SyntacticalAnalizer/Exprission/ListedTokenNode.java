@@ -13,16 +13,16 @@ import java.util.List;
  */
 public class ListedTokenNode extends TokenNode {
 
-    private List<Token> allowed;
+    private List<Integer> allowedId;
     private String exceptionText;
 
-    public ListedTokenNode(List<Token> allowedValues){
+    public ListedTokenNode(List<Integer> allowedValues){
         super();
-        allowed = allowedValues;
+        allowedId = allowedValues;
         exceptionText = "Unexpected token ";
     }
 
-    public ListedTokenNode(List<Token> allowedValues, String exceptionText){
+    public ListedTokenNode(List<Integer> allowedValues, String exceptionText){
         this(allowedValues);
         setExceptionText(exceptionText);
     }
@@ -34,7 +34,7 @@ public class ListedTokenNode extends TokenNode {
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
         super.parse(iterator);
-        if (allowed.indexOf(getToken()) == -1)
+        if (allowedId.indexOf(getToken().getId()) == -1)
             throw new ParseException(exceptionText, getToken().getPosition());
         return this;
     }

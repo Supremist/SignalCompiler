@@ -41,6 +41,10 @@ public class Parser {
             int ch = reader.read();
             if (ch != -1){
                 currentChar = (char) ch;
+                if (currentChar == '\n') {
+                    currentPosition.nextLine();
+                    nextChar();
+                }
                 currentPosition.nextSymbol();
             }
             else{
@@ -184,10 +188,6 @@ public class Parser {
                 parseConstant();
             else if (Character.isLetter(currentChar))
                 parseIdentifier();
-            else if (currentChar == '\n') {
-                currentPosition.nextLine();
-                nextChar();
-            }
             else if (Character.isWhitespace(currentChar))
                 nextChar();
             else

@@ -16,8 +16,7 @@ public class AddInstruction extends ListedTokenNode {
     private static final Integer[] ADD_INSTRUCTIONS  = {1, 2, 15}; // "+", "-", "!"
 
     public AddInstruction() throws ParseException {
-        super(Arrays.asList(ADD_INSTRUCTIONS).stream()
-                        .map(Token::fromId).collect(Collectors.toList()),
+        super(Arrays.asList(ADD_INSTRUCTIONS),
                 "Add instruction expected ");
     }
 

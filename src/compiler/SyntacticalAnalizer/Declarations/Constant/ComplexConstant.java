@@ -13,9 +13,9 @@ public class ComplexConstant extends TreeNode {
 
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
-        parseExactTokenNode(iterator, 17); // symbol '
+        parseExactTokenNode(iterator, 8); // symbol '
         number = parseChild(iterator, ComplexNumber.class);
-        parseExactTokenNode(iterator, 17); // symbol '
+        parseExactTokenNode(iterator, 8); // symbol '
         return this;
     }
 }

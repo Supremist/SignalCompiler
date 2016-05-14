@@ -25,7 +25,7 @@ public class Function extends NamedTreeNode {
         super.parse(iterator);
         parseExactTokenNode(iterator, 5); // "="
         expression = parseChild(iterator, Expression.class);
-        parseExactTokenNode(iterator, 18); // "\"
+        parseExactTokenNode(iterator, 17); // "\"
         characteristic[0] = parseChild(iterator, UnsignedConstant.class);
         parseExactTokenNode(iterator, 3); // ","
         characteristic[1] = parseChild(iterator, UnsignedConstant.class);

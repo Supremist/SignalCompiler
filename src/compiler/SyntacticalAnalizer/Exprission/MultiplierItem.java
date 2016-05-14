@@ -20,6 +20,8 @@ public class MultiplierItem extends NamedTreeNode {
         }
         else if(iterator.getNext().getType() == Token.Type.CONSTANT)
             parseChild(iterator, UnsignedConstant.class);
+        else if(iterator.getNext().getType() == Token.Type.IDENTIFIER)
+            parseChild(iterator, NamedTreeNode.class);
         return this;
     }
 }
