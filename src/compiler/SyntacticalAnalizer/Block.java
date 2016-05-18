@@ -1,6 +1,7 @@
 package compiler.SyntacticalAnalizer;
 
 import compiler.SyntacticalAnalizer.Declarations.Declarations;
+import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
 
 /**
@@ -27,5 +28,13 @@ public class Block extends TreeNode {
         }
         parseExactTokenNode(iterator, 403); // Keyword "END"
         return this;
+    }
+
+    public Declarations getDeclarations() {
+        return declarations;
+    }
+
+    public StringBuilder toAsmCode(Grammar grammar){
+        return new StringBuilder();
     }
 }

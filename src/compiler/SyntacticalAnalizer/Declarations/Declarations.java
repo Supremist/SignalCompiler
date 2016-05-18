@@ -3,7 +3,10 @@ package compiler.SyntacticalAnalizer.Declarations;
 import compiler.SyntacticalAnalizer.*;
 import compiler.SyntacticalAnalizer.Declarations.Constant.ConstantDeclaration;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclaration;
+import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclarations;
 import compiler.lexan.ParseException;
+
+import java.util.List;
 
 /**
  * Created by supremist on 5/8/16.
@@ -11,14 +14,14 @@ import compiler.lexan.ParseException;
 public class Declarations extends TreeNode {
 
     private SyntaxList<ConstantDeclaration> constants;
-    private SyntaxList<VariableDeclaration> variables;
+    private VariableDeclarations variable_declarations;
     private SyntaxList<Function> functions;
     private SyntaxList<Procedure> procedures;
 
     public Declarations(){
         super();
         constants = new SyntaxList<ConstantDeclaration>(ConstantDeclaration.class);
-        variables = new SyntaxList<VariableDeclaration>(VariableDeclaration.class);
+        variable_declarations = new VariableDeclarations();
         functions = new SyntaxList<Function>(Function.class);
         procedures = new SyntaxList<Procedure>(Procedure.class);
     }
@@ -29,7 +32,7 @@ public class Declarations extends TreeNode {
             parseDeclaration(iterator, constants);
         }
         if (iterator.getNext().getId() == 405) { //Keyword "VAR"
-            parseDeclaration(iterator, variables);
+            parseDeclaration(iterator, variable_declarations);
         }
         if (iterator.getNext().getId() == 412) { //Keyword "DEFFUNC"
             parseDeclaration(iterator, functions);
@@ -45,5 +48,21 @@ public class Declarations extends TreeNode {
         parseChild(iterator, TokenNode.class);
         list.parse(iterator);
         addChild(list);
+    }
+
+    public List<ConstantDeclaration> getConstants(){
+        return constants.getItems();
+    }
+
+    public List<VariableDeclaration> getVariableDeclarations(){
+        return variable_declarations.getItems();
+    }
+
+    public List<Function> getFunctions(){
+        return functions.getItems();
+    }
+
+    public List<Procedure> getProcedures(){
+        return procedures.getItems();
     }
 }

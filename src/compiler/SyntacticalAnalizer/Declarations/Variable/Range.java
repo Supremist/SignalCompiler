@@ -11,17 +11,20 @@ import compiler.lexan.Token;
  */
 public class Range extends TreeNode {
 
+    int left, right;
+
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
         TokenNode node = parseChild(iterator, TokenNode.class);
         if (node.getToken().getType() != Token.Type.CONSTANT)
-            throw new ParseException("Unexpected symbol", node.getToken().getPosition());
+            throw new ParseException("Constant expected", node.getToken().getPosition());
         node = parseChild(iterator, TokenNode.class);
+        //if (node.getToken())
         if (node.getToken().getId() != 306) // ".."
             throw new ParseException("Expected \"..\"", node.getToken().getPosition());
         node = parseChild(iterator, TokenNode.class);
         if (node.getToken().getType() != Token.Type.CONSTANT)
-            throw new ParseException("Unexpected symbol", node.getToken().getPosition());
+            throw new ParseException("Constant expected", node.getToken().getPosition());
         return this;
     }
 

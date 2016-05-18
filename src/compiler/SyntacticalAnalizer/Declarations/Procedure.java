@@ -1,6 +1,7 @@
 package compiler.SyntacticalAnalizer.Declarations;
 
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclaration;
+import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclarations;
 import compiler.SyntacticalAnalizer.NamedTreeNode;
 import compiler.SyntacticalAnalizer.SyntaxList;
 import compiler.SyntacticalAnalizer.TokenIterator;
@@ -12,11 +13,11 @@ import compiler.lexan.ParseException;
  */
 public class Procedure extends NamedTreeNode {
 
-    private SyntaxList<VariableDeclaration> parameters;
+    private VariableDeclarations parameters;
 
     public Procedure(){
         super();
-        parameters = new SyntaxList<VariableDeclaration>(VariableDeclaration.class);
+        parameters = new VariableDeclarations();
     }
 
     @Override
@@ -30,6 +31,10 @@ public class Procedure extends NamedTreeNode {
         }
         parseExactTokenNode(iterator, 0); // ";"
         return this;
+    }
+
+    public VariableDeclarations getParameters(){
+        return parameters;
     }
 
 }

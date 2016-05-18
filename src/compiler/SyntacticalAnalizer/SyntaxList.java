@@ -11,8 +11,6 @@ import java.util.List;
  */
 public class SyntaxList<T extends TreeNode> extends TreeNode{
 
-
-
     public abstract class EmptySeparator extends TreeNode{}
 
     private Class<? extends T> itemClass;

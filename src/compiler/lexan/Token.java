@@ -78,6 +78,15 @@ public class Token {
         return "";
     }
 
+    @Override
+    public boolean equals(Object other){
+        if (other.getClass() == Token.class){
+            return this.getId() == ((Token) other).getId();
+        }
+        else
+            return false;
+    }
+
     public static Token fromString(String line){
         String[] values = line.split(" ");
         return new Token(Integer.valueOf(values[0]),

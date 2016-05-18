@@ -36,6 +36,7 @@ public class Attribute extends TreeNode {
         else {
             type = Type.RANGE;
             ranges.parse(iterator);
+            addChild(ranges);
         }
         return this;
     }
