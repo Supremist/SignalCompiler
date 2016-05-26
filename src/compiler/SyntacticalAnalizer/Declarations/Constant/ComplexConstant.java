@@ -18,4 +18,6 @@ public class ComplexConstant extends TreeNode {
         parseExactTokenNode(iterator, 8); // symbol '
         return this;
     }
+
+    public ComplexNumber getComplexNumber(){return number;}
 }

@@ -1,8 +1,10 @@
 package compiler.SyntacticalAnalizer.Declarations.Variable;
 
+import compiler.SyntacticalAnalizer.CompileException;
 import compiler.SyntacticalAnalizer.TokenIterator;
 import compiler.SyntacticalAnalizer.TokenNode;
 import compiler.SyntacticalAnalizer.TreeNode;
+import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
 import compiler.lexan.Token;
 
@@ -11,22 +13,31 @@ import compiler.lexan.Token;
  */
 public class Range extends TreeNode {
 
-    int left, right;
+    private  Token leftToken, rightToken;
 
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
+        leftToken = parsePart(iterator).getToken();
+        if (iterator.getNext().getId() != 306) // ".."
+            throw new ParseException("Expected \"..\"", iterator.getNext().getPosition());
+        parseChild(iterator, TokenNode.class);
+        rightToken = parsePart(iterator).getToken();
+        return this;
+    }
+
+    private TokenNode parsePart(TokenIterator iterator) throws ParseException{
         TokenNode node = parseChild(iterator, TokenNode.class);
         if (node.getToken().getType() != Token.Type.CONSTANT)
             throw new ParseException("Constant expected", node.getToken().getPosition());
-        node = parseChild(iterator, TokenNode.class);
-        //if (node.getToken())
-        if (node.getToken().getId() != 306) // ".."
-            throw new ParseException("Expected \"..\"", node.getToken().getPosition());
-        node = parseChild(iterator, TokenNode.class);
-        if (node.getToken().getType() != Token.Type.CONSTANT)
-            throw new ParseException("Constant expected", node.getToken().getPosition());
-        return this;
+        if (!node.getToken().isInteger())
+            throw new ParseException("Integer expected", node.getToken().getPosition());
+        return node;
     }
+
+
+    public Token getLeft(){return leftToken;}
+    public Token getRight(){return rightToken;}
+    public int getLength(){return  rightToken.getInteger() - leftToken.getInteger();}
 
     @Override
     public String toString() {

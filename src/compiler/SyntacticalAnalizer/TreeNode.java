@@ -3,6 +3,7 @@ package compiler.SyntacticalAnalizer;
 import com.sun.deploy.util.StringUtils;
 import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
+import compiler.lexan.Position;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,10 +34,13 @@ public abstract class TreeNode implements Serializable{
         return this.getClass().getSimpleName();
     }
 
-    public boolean tryParse(TokenIterator iterator){
+    public boolean tryParse(TokenIterator iterator) throws ParseException{
         try {
             iterator.savePosition();
             parse(iterator);
+        }
+        catch (CompileException ex){
+            throw ex;
         }
         catch (ParseException ex){
             iterator.seekBack();
@@ -92,30 +96,30 @@ public abstract class TreeNode implements Serializable{
         return buffer;
     }
 
-    public StringBuilder toStringTree(Grammar grammar){
+    public StringBuilder toStringTree(){
         StringBuilder buffer = getLevelWhitespace();
         buffer.append(toString());
         buffer.append('\n');
         for (TreeNode child:children) {
-            buffer.append(child.toStringTree(grammar));
+            buffer.append(child.toStringTree());
         }
         return buffer;
     }
 
-    public StringBuilder toXmlView(Grammar grammar){
+    public StringBuilder toXmlView(){
         StringBuilder buffer = getLevelWhitespace();
         buffer.append("<").append(getClass().getSimpleName())
-                .append(getXmlAttrs(grammar))
+                .append(getXmlAttrs())
                 .append(">\n");
         for(TreeNode child: children){
-            buffer.append(child.toXmlView(grammar));
+            buffer.append(child.toXmlView());
         }
         buffer.append(getLevelWhitespace())
                 .append("</").append(getClass().getSimpleName()).append(">\n");
         return buffer;
     }
 
-    public StringBuilder getXmlAttrs(Grammar grammar){
+    public StringBuilder getXmlAttrs(){
         StringBuilder buffer = new StringBuilder();
         //can add here some attributes to show in xml view
         return buffer;
@@ -133,6 +137,10 @@ public abstract class TreeNode implements Serializable{
         this.level = level;
         for (TreeNode child: children)
             child.setLevel(level+1);
+    }
+
+    public Position getPosition(){
+        return children.get(0).getPosition();
     }
 
     public void clearChildren(){

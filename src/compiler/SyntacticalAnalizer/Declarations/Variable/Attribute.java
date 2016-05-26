@@ -3,6 +3,8 @@ package compiler.SyntacticalAnalizer.Declarations.Variable;
 import compiler.SyntacticalAnalizer.*;
 import compiler.lexan.ParseException;
 
+import java.util.List;
+
 /**
  * Created by supremist on 4/13/16.
  */
@@ -19,6 +21,7 @@ public class Attribute extends TreeNode {
     }
 
     public Type getType(){return type;}
+    public List<Range> getRanges(){return ranges.getItems();}
 
     @Override
     public String toString(){

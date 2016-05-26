@@ -1,5 +1,6 @@
 package compiler.SyntacticalAnalizer.Declarations.Constant;
 
+import compiler.SyntacticalAnalizer.CompileException;
 import compiler.SyntacticalAnalizer.TokenIterator;
 import compiler.SyntacticalAnalizer.TokenNode;
 import compiler.SyntacticalAnalizer.TreeNode;
@@ -8,7 +9,7 @@ import compiler.lexan.ParseException;
 /**
  * Created by supremist on 5/8/16.
  */
-public class Constant extends TreeNode {
+public class Constant extends TreeNode implements IConstantValue{
     private boolean isMinus;
     private ComplexConstant complexConstant;
     private UnsignedConstant unsignedConstant;
@@ -32,5 +33,28 @@ public class Constant extends TreeNode {
             unsignedConstant = parseChild(iterator, UnsignedConstant.class);
         }
         return this;
+    }
+
+    public boolean isComplex(){
+        return complexConstant != null;
+    }
+
+    public boolean isUnsigned(){
+        return unsignedConstant != null;
+    }
+
+    @Override
+    public ConstantValue calcConstantValue(ConstantDeclarations declarations) throws CompileException {
+        ConstantValue result;
+        if(isComplex()){
+            result = complexConstant.getComplexNumber().calcConstantValue(declarations);
+        }
+        else {
+            result = new ConstantValue(unsignedConstant.getToken().getConstant());
+        }
+        if (isMinus)
+            return result.unaryMinus();
+        else
+            return result;
     }
 }

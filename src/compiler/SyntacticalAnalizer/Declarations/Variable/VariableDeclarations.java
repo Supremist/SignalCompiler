@@ -1,8 +1,6 @@
 package compiler.SyntacticalAnalizer.Declarations.Variable;
 
-import compiler.SyntacticalAnalizer.SyntaxList;
-import compiler.SyntacticalAnalizer.TokenIterator;
-import compiler.SyntacticalAnalizer.TreeNode;
+import compiler.SyntacticalAnalizer.*;
 import compiler.lexan.ParseException;
 
 import java.util.ArrayList;
@@ -11,7 +9,7 @@ import java.util.List;
 /**
  * Created by supremist on 5/14/16.
  */
-public class VariableDeclarations extends SyntaxList<VariableDeclaration> {
+public class VariableDeclarations extends SyntaxList<VariableDeclaration> implements Compilable {
     private List<Variable> variableList;
     private int size;
 
@@ -37,6 +35,11 @@ public class VariableDeclarations extends SyntaxList<VariableDeclaration> {
         }
     }
 
+    public void checkIdentifierUniqueness(List<String> identifiers) throws CompileException {
+        for (Variable variable: variableList)
+            variable.getName().checkIdentifierUniqueness(identifiers);
+    }
+
     public List<Variable> getVariableList(){
         return variableList;
     }
@@ -46,4 +49,12 @@ public class VariableDeclarations extends SyntaxList<VariableDeclaration> {
     }
 
 
+    @Override
+    public StringBuilder toAsmCode() throws CompileException {
+        StringBuilder buffer = new StringBuilder();
+        for (Variable variable: variableList){
+            buffer.append(variable.toAsmCode()).append("\n");
+        }
+        return buffer;
+    }
 }

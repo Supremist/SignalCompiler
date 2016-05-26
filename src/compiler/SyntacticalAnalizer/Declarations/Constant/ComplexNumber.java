@@ -1,16 +1,17 @@
 package compiler.SyntacticalAnalizer.Declarations.Constant;
 
+import compiler.SyntacticalAnalizer.CompileException;
 import compiler.SyntacticalAnalizer.Exprission.Expression;
 import compiler.SyntacticalAnalizer.TokenIterator;
 import compiler.SyntacticalAnalizer.TokenNode;
 import compiler.SyntacticalAnalizer.TreeNode;
 import compiler.lexan.ParseException;
-import compiler.lexan.Token;
 
 /**
  * Created by supremist on 5/8/16.
  */
-public class ComplexNumber extends TreeNode {
+
+public class ComplexNumber extends TreeNode implements IConstantValue {
 
     private Expression left;
     private Expression right;
@@ -48,4 +49,20 @@ public class ComplexNumber extends TreeNode {
         return true;
     }
 
+    @Override
+    public ConstantValue calcConstantValue(ConstantDeclarations declarations) throws CompileException {
+        ConstantValue leftValue  = left.calcConstantValue(declarations);
+        ConstantValue rightValue = right.calcConstantValue(declarations);
+        if (leftValue.isFloat() && rightValue.isFloat()){
+            if(isExp){
+                return ConstantValue.fromExp(leftValue.real, rightValue.real);
+            }
+            else {
+                return new ConstantValue(leftValue.real, rightValue.real);
+            }
+        }
+        else {
+            throw new CompileException("Complex parts should be real", left.getPosition());
+        }
+    }
 }

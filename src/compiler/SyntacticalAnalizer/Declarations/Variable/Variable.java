@@ -1,33 +1,16 @@
 package compiler.SyntacticalAnalizer.Declarations.Variable;
 
-import compiler.SyntacticalAnalizer.CompileException;
-import compiler.SyntacticalAnalizer.NamedTreeNode;
-import compiler.SyntacticalAnalizer.SyntaxList;
+import compiler.SyntacticalAnalizer.*;
 
 /**
  * Created by supremist on 5/14/16.
  */
-public class Variable {
+
+public class Variable implements Compilable{
     private NamedTreeNode name;
-    private ExtendedType type;
+    private ExtendedVariableType type;
 
-    public enum BaseType {INTEGER, FLOAT, BLOCKFLOAT}
-
-    public class ExtendedType{
-        private BaseType baseType = null;
-        private boolean isComplex = false;
-        private boolean isExt = false;
-        private boolean isSignal = false;
-
-        public void init(SyntaxList<Attribute> attributes) throws CompileException{
-            for (Attribute attribute: attributes.getItems()){
-
-            }
-        }
-
-    }
-
-    public Variable(NamedTreeNode name, ExtendedType type){
+    public Variable(NamedTreeNode name, ExtendedVariableType type){
         this.name = name;
         this.type = type;
     }
@@ -36,11 +19,21 @@ public class Variable {
         return name;
     }
 
-    public ExtendedType getType(){
+    public ExtendedVariableType getType(){
         return type;
     }
 
     public int getSize(){
         return 4; //TODO add realization
+    }
+
+    @Override
+    public StringBuilder toAsmCode() throws CompileException {
+        StringBuilder buffer = new StringBuilder();
+        if(type.isExtern())
+            buffer.append("extern ");
+        buffer.append(name.toAsmCode()).append(" ")
+                .append(type.toAsmCode());
+        return buffer;
     }
 }

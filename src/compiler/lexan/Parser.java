@@ -2,7 +2,6 @@ package compiler.lexan;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -66,9 +65,9 @@ public class Parser {
         String identifier = buffer.toString();
         int index;
         if ((index = grammar.getKeywords().indexOf(identifier)) != -1)
-            addToken(Token.Type.KEYWORD, index);
+            addToken(identifier, Token.Type.KEYWORD, index);
         else
-            addToken(Token.Type.IDENTIFIER, Grammar.addUniqueItem(identifier, grammar.getIdentifiers()));
+            addToken(identifier, Token.Type.IDENTIFIER, Grammar.addUniqueItem(identifier, grammar.getIdentifiers()));
     }
 
     private double parseDigits(){
@@ -113,16 +112,16 @@ public class Parser {
             if (delimiter.equals(COMMENT_STARTER))
                 isComment = true;
             else if (delimiter.length() == 1)
-                addToken(Token.Type.SINGLE_CHAR, delimiterIndex);
+                addToken(delimiter, Token.Type.SINGLE_CHAR, delimiterIndex);
             else
-                addToken(Token.Type.DELIMITER, delimiterIndex);
+                addToken(delimiter, Token.Type.DELIMITER, delimiterIndex);
             return true;
         }
         return false;
     }
 
-    private void addToken(Token.Type type, int index){
-        tokens.add(new Token(type, currentPosition, index));
+    private void addToken(String view, Token.Type type, int index){
+        tokens.add(new Token(view, type, index, currentPosition));
     }
 
     private void parseComment() throws ParseException{
@@ -169,7 +168,9 @@ public class Parser {
             else
                 throw new ParseException("Digit expected", currentPosition);
         }
-        addToken(Token.Type.CONSTANT, Grammar.addUniqueItem(constant, grammar.getConstants()));
+        addToken(String.valueOf(constant),
+                Token.Type.CONSTANT,
+                Grammar.addUniqueItem(constant, grammar.getConstants()));
     }
 
     public Parser parse(InputStream input) throws ParseException{

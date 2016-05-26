@@ -3,10 +3,12 @@ package compiler.SyntacticalAnalizer;
 import compiler.lexan.ParseException;
 import compiler.lexan.Token;
 
+import java.util.List;
+
 /**
  * Created by supremist on 4/11/16.
  */
-public class NamedTreeNode extends TreeNode{
+public class NamedTreeNode extends TreeNode implements  Compilable {
     private TokenNode identifier;
 
     public TokenNode getIdentifier(){return identifier;}
@@ -26,8 +28,21 @@ public class NamedTreeNode extends TreeNode{
         return this;
     }
 
+    public void checkIdentifierUniqueness(List<String> identifiers) throws CompileException{
+        String identifierView =identifier.getToken().getView();
+        if(identifiers.indexOf(identifierView) != -1)
+            throw new CompileException("Identifier is not unique ", identifier.getToken().getPosition());
+        else
+            identifiers.add(identifierView);
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + identifier.toString();
+    }
+
+    @Override
+    public StringBuilder toAsmCode() throws CompileException {
+        return new StringBuilder().append(identifier.getToken().getView());
     }
 }

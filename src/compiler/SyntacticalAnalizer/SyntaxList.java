@@ -72,8 +72,8 @@ public class SyntaxList<T extends TreeNode> extends TreeNode{
     }
 
     @Override
-    public StringBuilder getXmlAttrs(Grammar grammar){
-        StringBuilder buffer = super.getXmlAttrs(grammar);
+    public StringBuilder getXmlAttrs(){
+        StringBuilder buffer = super.getXmlAttrs();
         buffer.append(" childType=\"").append(itemClass.getSimpleName()).append("\"");
         return buffer;
     }

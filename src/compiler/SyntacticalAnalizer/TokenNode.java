@@ -2,9 +2,8 @@ package compiler.SyntacticalAnalizer;
 
 import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
+import compiler.lexan.Position;
 import compiler.lexan.Token;
-
-import java.util.Arrays;
 
 /**
  * Created by supremist on 4/12/16.
@@ -30,30 +29,28 @@ public class TokenNode extends TreeNode {
     }
 
     @Override
-    public StringBuilder toStringTree(Grammar grammar){
+    public StringBuilder toStringTree(){
         StringBuilder buffer = getLevelWhitespace();
-        if (grammar != null) {
-            buffer.append(token.findView(grammar))
+            buffer.append(token.getView())
                     .append(" ")
                     .append(toString())
                     .append("\n");
-        }
         return buffer;
     }
 
     @Override
-    public StringBuilder toXmlView(Grammar grammar){
+    public StringBuilder toXmlView(){
         StringBuilder buffer = getLevelWhitespace();
         buffer.append("<").append(getClass().getSimpleName())
-                .append(getXmlAttrs(grammar))
+                .append(getXmlAttrs())
                 .append("/>\n");
         return buffer;
     }
 
     @Override
-    public StringBuilder getXmlAttrs(Grammar grammar){
-        StringBuilder buffer = super.getXmlAttrs(grammar);
-        buffer.append(" str=\"").append(token.findView(grammar)).append("\"");
+    public StringBuilder getXmlAttrs(){
+        StringBuilder buffer = super.getXmlAttrs();
+        buffer.append(" str=\"").append(token.getView()).append("\"");
         buffer.append(" type=\"").append(token.getType().toString()).append("\"");
         return buffer;
     }
@@ -61,6 +58,11 @@ public class TokenNode extends TreeNode {
     @Override
     public String toString() {
         return token.toString();
+    }
+
+    @Override
+    public Position getPosition(){
+        return getToken().getPosition();
     }
 
 }

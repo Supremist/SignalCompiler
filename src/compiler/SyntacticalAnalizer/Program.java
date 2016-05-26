@@ -2,8 +2,6 @@ package compiler.SyntacticalAnalizer;
 
 import compiler.SyntacticalAnalizer.Declarations.Procedure;
 import compiler.SyntacticalAnalizer.Declarations.Variable.Variable;
-import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclaration;
-import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
 
 import java.util.List;
@@ -11,7 +9,7 @@ import java.util.List;
 /**
  * Created by supremist on 4/11/16.
  */
-public class Program extends NamedTreeNode {
+public class Program extends NamedTreeNode implements Compilable{
 
     private Block block;
     private Procedure procedure;
@@ -39,14 +37,14 @@ public class Program extends NamedTreeNode {
         return block;
     }
 
-    public StringBuilder toAsmCode(Grammar grammar){
+    public StringBuilder toAsmCode() throws CompileException{
         StringBuilder buffer = new StringBuilder();
-        String identifier = getIdentifier().getToken().findView(grammar);
+        String identifier = getIdentifier().getToken().getView();
+        buffer.append(".386\nASSUME CS:").append(identifier)
+                .append("CODE,DS:").append(identifier).append("DATA\n");
+        buffer.append(getBlock().getDeclarations().toAsmCode());
         if (procedure == null){ // program
-            buffer.append(".386\n").append(identifier).append(" SEGMENT\n")
-                    .append("assume cs:").append(identifier).append(",ds:").append(identifier)
-                    .append("org 100h\n").append(block.toAsmCode(grammar))
-                    .append(identifier).append(" ENDS\nend START");
+
         }
         else{ // procedure
             int steckStart = 4;

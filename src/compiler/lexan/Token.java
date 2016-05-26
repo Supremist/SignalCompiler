@@ -2,6 +2,8 @@ package compiler.lexan;
 
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 
+import static java.lang.Double.NaN;
+
 /**
  * Created by supremist on 4/11/16.
  */
@@ -21,15 +23,18 @@ public class Token {
     private final Position position;
     private final int index;
     private final int id;
+    private  String view;
 
-    public Token (Type type, Position position, int index){
+    public Token(String view, Type type, int index, Position position){
+        this.view = view;
         this.type = type;
         this.position = new Position(position);
         this.index = index;
         this.id = OFFSETS[type.ordinal()] + index;
     }
 
-    public Token (int id, Position position){
+    public Token (String view, int id, Position position){
+        this.view = view;
         type = getTypeById(id);
         this.position = new Position(position);
         this.index = id - OFFSETS[type.ordinal()];
@@ -37,7 +42,7 @@ public class Token {
     }
 
     public static Token fromId(int id){
-        return new Token(id, new Position());
+        return new Token("", id, new Position());
     }
 
     public static Type getTypeById(int id) throws ValueException{
@@ -53,34 +58,50 @@ public class Token {
         }
     }
 
-    public boolean equals(Token other){
-        return this.getId() == other.getId();
-    }
-
     public Type getType(){return type;}
     public Position getPosition(){return position;}
     public int getIndex(){return index;}
     public int getId(){return id;}
 
     public String toString(){
-        return String.valueOf(id)+" "+position.toString();
+        return view + " " + String.valueOf(id)+" "+position.toString();
     }
 
-    public String findView(Grammar grammar){
+    public void setView(Grammar grammar){
         if (type == Type.SINGLE_CHAR || type == Type.DELIMITER)
-            return grammar.getDelimiters().get(index);
-        if(type == Type.KEYWORD)
-            return grammar.getKeywords().get(index);
-        if (type == Type.CONSTANT)
-            return String.valueOf(grammar.getConstants().get(index));
-        if (type == Type.IDENTIFIER)
-            return grammar.getIdentifiers().get(index);
-        return "";
+            view = grammar.getDelimiters().get(index);
+        else if(type == Type.KEYWORD)
+            view = grammar.getKeywords().get(index);
+        else if (type == Type.CONSTANT)
+            view = String.valueOf(grammar.getConstants().get(index));
+        else if (type == Type.IDENTIFIER)
+            view = grammar.getIdentifiers().get(index);
+    }
+
+    public String getView(){
+        return view;
+    }
+
+    public double getConstant(){
+        if(type == Type.CONSTANT)
+            return Double.valueOf(view);
+        else
+            return NaN;
+    }
+
+    public boolean isInteger(){
+        double constant = getConstant();
+        return constant != NaN && !Double.isInfinite(constant)
+                && constant == Math.floor(constant) && constant < Integer.MAX_VALUE;
+    }
+
+    public int getInteger(){
+        return (int) getConstant();
     }
 
     @Override
     public boolean equals(Object other){
-        if (other.getClass() == Token.class){
+        if (other instanceof Token){
             return this.getId() == ((Token) other).getId();
         }
         else
@@ -89,7 +110,7 @@ public class Token {
 
     public static Token fromString(String line){
         String[] values = line.split(" ");
-        return new Token(Integer.valueOf(values[0]),
-                new Position(Integer.valueOf(values[1]), Integer.valueOf(values[2])));
+        return new Token(values[0], Integer.valueOf(values[1]),
+                new Position(Integer.valueOf(values[2]), Integer.valueOf(values[3])));
     }
 }

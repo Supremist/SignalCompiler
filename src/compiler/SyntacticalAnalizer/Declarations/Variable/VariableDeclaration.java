@@ -30,13 +30,15 @@ public class VariableDeclaration extends TreeNode {
         attributes.parse(iterator);
         addChild(attributes);
         parseExactTokenNode(iterator, 0); // ";"
-        if (variable_names.getItems().size() != attributes.getItems().size())
-            throw new ParseException("Variables size should match attributes size",
-                    iterator.getNext().getPosition());
-        variables.clear();
-        for (int i = 0; i<attributes.getItems().size(); ++i)
-            variables.add(new Variable(variable_names.get(i), attributes.get(i)));
+        initVariables();
         return this;
+    }
+
+    public void initVariables() throws CompileException{
+        variables.clear();
+        ExtendedVariableType varType = new ExtendedVariableType(attributes);
+        for(NamedTreeNode name: variable_names.getItems())
+            variables.add(new Variable(name, varType));
     }
 
     public List<Variable> getVariables(){

@@ -28,7 +28,7 @@ ASSUME CS:<identifier>CODE,DS:<identifier>DATA
 <identifier>CODE SEGMENT
 org 100h
 
-procname PROC
+procname PROC FAR
 push ebp
 mov ebp, esp
 pushad
