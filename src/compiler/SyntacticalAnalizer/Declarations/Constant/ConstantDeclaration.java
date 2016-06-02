@@ -2,6 +2,7 @@ package compiler.SyntacticalAnalizer.Declarations.Constant;
 
 import compiler.SyntacticalAnalizer.*;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 /**
  * Created by supremist on 5/8/16.
@@ -14,10 +15,10 @@ public class ConstantDeclaration extends NamedTreeNode implements IConstantValue
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException{
         super.parse(iterator);
-        parseExactTokenNode(iterator, 5); // "="
+        parseExactTokenNode(iterator, Token.Delimiter.EQUAL); // "="
         constant = parseChild(iterator, Constant.class);
         value = null;
-        parseExactTokenNode(iterator, 0); // ";"
+        parseExactTokenNode(iterator, Token.Delimiter.SEMICOLON); // ";"
         return this;
     }
 

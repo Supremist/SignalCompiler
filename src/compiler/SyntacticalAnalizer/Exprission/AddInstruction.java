@@ -15,7 +15,8 @@ import java.util.stream.Collectors;
 
 public class AddInstruction extends ListedTokenNode implements IInstruction{
 
-    private static final Integer[] ADD_INSTRUCTIONS  = {1, 2, 15}; // "+", "-", "!"
+    private static final Token.TokenEnum [] ADD_INSTRUCTIONS  = {Token.Delimiter.PLUS,
+            Token.Delimiter.MINUS, Token.Delimiter.BANG}; // "+", "-", "!"
 
     public AddInstruction() throws ParseException {
         super(Arrays.asList(ADD_INSTRUCTIONS),
@@ -23,13 +24,13 @@ public class AddInstruction extends ListedTokenNode implements IInstruction{
     }
 
     public ConstantValue calc(ConstantValue value1, ConstantValue value2) throws IllegalArgumentException{
-        if (getToken().getId() == 1){
+        if (getToken().isEqual(Token.Delimiter.PLUS)){
             return value1.add(value2);
         }
-        else if(getToken().getId() == 2){
+        else if(getToken().isEqual(Token.Delimiter.MINUS)){
             return value1.subrtact(value2);
         }
-        else if(getToken().getId() == 15){
+        else if(getToken().isEqual(Token.Delimiter.BANG)){
             return new ConstantValue(value1.bitOr(value2));
         }
         return new ConstantValue();

@@ -7,22 +7,25 @@ import compiler.lexan.ParseException;
 import compiler.lexan.Token;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by supremist on 4/30/16.
  */
 public class ListedTokenNode extends TokenNode {
 
-    private List<Integer> allowedId;
+    private List<Token> allowedId;
     private String exceptionText;
 
-    public ListedTokenNode(List<Integer> allowedValues){
+    public ListedTokenNode(List<Token.TokenEnum> allowedValues){
         super();
-        allowedId = allowedValues;
+        allowedId = allowedValues.stream()
+                .map(Token.TokenEnum::makeToken)
+                .collect(Collectors.toList());
         exceptionText = "Unexpected token ";
     }
 
-    public ListedTokenNode(List<Integer> allowedValues, String exceptionText){
+    public ListedTokenNode(List<Token.TokenEnum> allowedValues, String exceptionText){
         this(allowedValues);
         setExceptionText(exceptionText);
     }
@@ -34,7 +37,7 @@ public class ListedTokenNode extends TokenNode {
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
         super.parse(iterator);
-        if (allowedId.indexOf(getToken().getId()) == -1)
+        if (allowedId.indexOf(getToken()) == -1)
             throw new ParseException(exceptionText, getToken().getPosition());
         return this;
     }

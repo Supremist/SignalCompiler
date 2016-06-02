@@ -18,18 +18,18 @@ public class Program extends NamedTreeNode implements Compilable{
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException{
         clearChildren();
-        if(iterator.getNext().getId() == 401) { //PROCEDURE
+        if(iterator.getCurrent().isEqual(Token.Keyword.PROCEDURE)) {
             procedure = parseChild(iterator, Procedure.class);
             block = parseChild(iterator, Block.class);
-            parseExactTokenNode(iterator, 0); // ;
+            parseExactTokenNode(iterator, Token.Delimiter.SEMICOLON);
         }
-        else if(iterator.getNext().getId() == 400) { //PROGRAM
+        else if(iterator.getCurrent().isEqual(Token.Keyword.PROGRAM)) {
             procedure = null;
             parseChild(iterator, TokenNode.class);
             parseIdentifier(iterator);
-            parseExactTokenNode(iterator, 0); // ";"
+            parseExactTokenNode(iterator, Token.Delimiter.SEMICOLON); // ";"
             block = parseChild(iterator, Block.class);
-            parseExactTokenNode(iterator, 7); // "."
+            parseExactTokenNode(iterator, Token.Delimiter.DOT); // "."
         }
         return this;
     }

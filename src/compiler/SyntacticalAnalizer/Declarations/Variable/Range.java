@@ -1,10 +1,8 @@
 package compiler.SyntacticalAnalizer.Declarations.Variable;
 
-import compiler.SyntacticalAnalizer.CompileException;
 import compiler.SyntacticalAnalizer.TokenIterator;
 import compiler.SyntacticalAnalizer.TokenNode;
 import compiler.SyntacticalAnalizer.TreeNode;
-import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
 import compiler.lexan.Token;
 
@@ -18,9 +16,7 @@ public class Range extends TreeNode {
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
         leftToken = parsePart(iterator).getToken();
-        if (iterator.getNext().getId() != 306) // ".."
-            throw new ParseException("Expected \"..\"", iterator.getNext().getPosition());
-        parseChild(iterator, TokenNode.class);
+        parseExactTokenNode(iterator, Token.Delimiter.DOUBLE_DOT);
         rightToken = parsePart(iterator).getToken();
         return this;
     }

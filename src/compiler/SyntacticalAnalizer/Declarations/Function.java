@@ -1,10 +1,12 @@
 package compiler.SyntacticalAnalizer.Declarations;
 
+import com.sun.corba.se.impl.oa.toa.TOA;
 import compiler.SyntacticalAnalizer.*;
 import compiler.SyntacticalAnalizer.Declarations.Constant.*;
 import compiler.SyntacticalAnalizer.Exprission.Expression;
 import compiler.SyntacticalAnalizer.Exprission.UnknownIdentifierException;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,13 +29,13 @@ public class Function extends NamedTreeNode implements Compilable{
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
         super.parse(iterator);
-        parseExactTokenNode(iterator, 5); // "="
+        parseExactTokenNode(iterator, Token.Delimiter.EQUAL); // "="
         expression = parseChild(iterator, Expression.class);
-        parseExactTokenNode(iterator, 17); // "\"
+        parseExactTokenNode(iterator, Token.Delimiter.BACK_SLASH); // "\"
         minBound = parseChild(iterator, UnsignedConstant.class);
-        parseExactTokenNode(iterator, 3); // ","
+        parseExactTokenNode(iterator, Token.Delimiter.COMMA); // ","
         maxBound = parseChild(iterator, UnsignedConstant.class);
-        parseExactTokenNode(iterator, 0); // ";"
+        parseExactTokenNode(iterator, Token.Delimiter.SEMICOLON); // ";"
         return this;
     }
 

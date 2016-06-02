@@ -16,17 +16,17 @@ public class MultiplierItem extends NamedTreeNode implements IConstantValue{
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
         clearChildren();
-        if(iterator.getNext().getId() == 9) {  // delimiter "("
-            parseExactTokenNode(iterator, 9); // delimiter "("
+        if(iterator.getCurrent().isEqual(Token.Delimiter.OPEN_BRACKET)) {  // delimiter "("
+            parseExactTokenNode(iterator, Token.Delimiter.OPEN_BRACKET); // delimiter "("
             expression = parseChild(iterator, Expression.class);
             constant = null;
-            parseExactTokenNode(iterator, 10); // delimiter ")"
+            parseExactTokenNode(iterator, Token.Delimiter.CLOSE_BRACKET); // delimiter ")"
         }
-        else if(iterator.getNext().getType() == Token.Type.CONSTANT) {
+        else if(iterator.getCurrent().getType() == Token.Type.CONSTANT) {
             constant = parseChild(iterator, UnsignedConstant.class);
             expression = null;
         }
-        else if(iterator.getNext().getType() == Token.Type.IDENTIFIER) {
+        else if(iterator.getCurrent().getType() == Token.Type.IDENTIFIER) {
             constant = null;
             expression = null;
             parseIdentifier(iterator);

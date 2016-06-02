@@ -1,8 +1,8 @@
 package compiler.SyntacticalAnalizer;
 
 import compiler.SyntacticalAnalizer.Declarations.Declarations;
-import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 /**
  * Created by supremist on 5/8/16.
@@ -21,12 +21,12 @@ public class Block extends TreeNode implements Compilable{
     public TreeNode parse(TokenIterator iterator) throws ParseException {
         declarations.parse(iterator);
         addChild(declarations);
-        parseExactTokenNode(iterator, 402); // Keyword "BEGIN"
-        if (iterator.getNext().getId() != 403) {
+        parseExactTokenNode(iterator, Token.Keyword.BEGIN); // Keyword "BEGIN"
+        if (!iterator.getCurrent().equals(Token.Keyword.END.makeToken())) {
             statementList.parse(iterator);
             addChild(statementList);
         }
-        parseExactTokenNode(iterator, 403); // Keyword "END"
+        parseExactTokenNode(iterator, Token.Keyword.END); // Keyword "END"
         return this;
     }
 

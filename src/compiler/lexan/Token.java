@@ -1,11 +1,14 @@
 package compiler.lexan;
 
+import com.sun.istack.internal.Nullable;
+import jdk.nashorn.internal.runtime.regexp.joni.ast.EncloseNode;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Double.NaN;
+import static java.lang.Double.sum;
 
 /**
  * Created by supremist on 4/11/16.
@@ -16,6 +19,7 @@ public class Token {
     public interface TokenEnum{
         Token makeToken();
         Type getType();
+        String toString();
     }
 
     public enum Keyword implements TokenEnum {PROGRAM, PROCEDURE, BEGIN, END, CONST, VAR,
@@ -89,6 +93,20 @@ public class Token {
         return new Token("", id, new Position());
     }
 
+    @Nullable
+    public TokenEnum getEnum(){
+        if (type == Type.KEYWORD){
+            return Keyword.values()[index];
+        }
+        else if (type == Type.SINGLE_CHAR
+                || type == Type.DELIMITER){
+            return Delimiter.values()[index];
+        }
+        else {
+            return null;
+        }
+    }
+
     public static Type getTypeById(int id) throws ValueException{
         if(id < 0)
             throw new ValueException("Value error: id < 0");
@@ -150,6 +168,10 @@ public class Token {
         }
         else
             return false;
+    }
+
+    public boolean isEqual(TokenEnum tokenEnum){
+        return equals(tokenEnum.makeToken());
     }
 
     @Override

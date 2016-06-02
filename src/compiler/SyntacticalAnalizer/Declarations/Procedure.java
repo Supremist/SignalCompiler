@@ -1,9 +1,9 @@
 package compiler.SyntacticalAnalizer.Declarations;
 
 import compiler.SyntacticalAnalizer.*;
-import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclaration;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclarations;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 /**
  * Created by supremist on 5/8/16.
@@ -19,14 +19,14 @@ public class Procedure extends NamedTreeNode implements Compilable{
 
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
-        parseExactTokenNode(iterator, 401); //Keyword "PROCEDURE"
+        parseExactTokenNode(iterator, Token.Keyword.PROCEDURE); //Keyword "PROCEDURE"
         super.parse(iterator);
-        if (iterator.getNext().getId() == 9) { // delimiter "("
-            parseExactTokenNode(iterator, 9); // delimiter "("
+        if (iterator.getCurrent().isEqual(Token.Delimiter.OPEN_BRACKET)) { // delimiter "("
+            parseExactTokenNode(iterator, Token.Delimiter.OPEN_BRACKET); // delimiter "("
             parameters.parse(iterator);
-            parseExactTokenNode(iterator, 10); // delimiter ")"
+            parseExactTokenNode(iterator, Token.Delimiter.CLOSE_BRACKET); // delimiter ")"
         }
-        parseExactTokenNode(iterator, 0); // ";"
+        parseExactTokenNode(iterator, Token.Delimiter.SEMICOLON); // ";"
         return this;
     }
 

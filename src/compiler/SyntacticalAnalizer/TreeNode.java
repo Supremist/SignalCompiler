@@ -4,6 +4,7 @@ import com.sun.deploy.util.StringUtils;
 import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
 import compiler.lexan.Position;
+import compiler.lexan.Token;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,8 +56,7 @@ public abstract class TreeNode implements Serializable{
                 return false;
         } catch (ParseException ex){
             throw ex;
-        }
-        catch (Exception ex){
+        } catch (Exception ex){
             ex.printStackTrace();
         }
         return true;
@@ -68,20 +68,18 @@ public abstract class TreeNode implements Serializable{
             T item = childClass.newInstance();
             addChild(item.parse(iterator));
             return item;
-        }
-        catch (ParseException ex){
+        } catch (ParseException ex){
             throw ex;
-        }
-        catch (Exception ex){
+        } catch (Exception ex){
             ex.printStackTrace(); // never happen
         }
         return null;
     }
 
-    public TokenNode parseExactTokenNode(TokenIterator iterator, int tokenId) throws ParseException{
+    public TokenNode parseExactTokenNode(TokenIterator iterator, Token.TokenEnum token) throws ParseException{
         TokenNode node = parseChild(iterator, TokenNode.class);
-        if (node.getToken().getId() != tokenId)
-            throw new ParseException(String.format("Token with id %d expected", tokenId), node.getToken().getPosition());
+        if (!node.getToken().isEqual(token))
+            throw new ParseException(String.format("Token %s expected", token), node.getPosition());
         return node;
     }
 

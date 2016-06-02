@@ -2,6 +2,7 @@ package compiler.SyntacticalAnalizer.Declarations.Variable;
 
 import compiler.SyntacticalAnalizer.*;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 import java.util.List;
 
@@ -28,15 +29,21 @@ public class Attribute extends TreeNode {
         return super.toString()+" "+type.toString();
     }
 
+    private Type toAttributeType(Token token) throws IllegalArgumentException{
+        if(token.getType() == Token.Type.KEYWORD) {
+            return Type.valueOf(token.getEnum().toString());
+        }
+        else
+            throw new IllegalArgumentException();
+    }
+
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
         clearChildren();
-        int currentTokenId = iterator.getNext().getId();
-        if(currentTokenId >= 406 && currentTokenId <= 411) { // All attributes
-            type = Type.values()[currentTokenId - 406]; // all numbers are keyword indexes LOL
+        try {
+            type = toAttributeType(iterator.getCurrent());
             parseChild(iterator, TokenNode.class);
-        }
-        else {
+        }catch (IllegalArgumentException ex){
             type = Type.RANGE;
             ranges.parse(iterator);
             addChild(ranges);

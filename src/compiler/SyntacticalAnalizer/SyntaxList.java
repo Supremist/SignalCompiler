@@ -1,6 +1,5 @@
 package compiler.SyntacticalAnalizer;
 
-import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
 
 import java.util.ArrayList;
@@ -70,7 +69,7 @@ public class SyntaxList<T extends TreeNode> extends TreeNode implements Compilab
             isCorrect = parseItem(iterator);
         } catch (ParseException cause){
             throw new ParseException("List should have at least one element ",
-                    iterator.getNext().getPosition(), cause);
+                    iterator.getCurrent().getPosition(), cause);
         }
         while ( isCorrect && parseSeparator(iterator)){
             try{
@@ -79,7 +78,7 @@ public class SyntaxList<T extends TreeNode> extends TreeNode implements Compilab
                 isCorrect = false;
                 if (separatorClass != EmptySeparator.class)
                     throw new ParseException("Next list item expected ",
-                            iterator.getNext().getPosition(), cause);
+                            iterator.getCurrent().getPosition(), cause);
             }
         }
         return this;

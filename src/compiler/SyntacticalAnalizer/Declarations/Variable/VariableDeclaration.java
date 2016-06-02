@@ -1,7 +1,9 @@
 package compiler.SyntacticalAnalizer.Declarations.Variable;
 
+import com.sun.corba.se.impl.oa.toa.TOA;
 import compiler.SyntacticalAnalizer.*;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +28,10 @@ public class VariableDeclaration extends TreeNode {
         clearChildren();
         variable_names.parse(iterator);
         addChild(variable_names);
-        parseExactTokenNode(iterator, 4); // ":"
+        parseExactTokenNode(iterator, Token.Delimiter.COLON); // ":"
         attributes.parse(iterator);
         addChild(attributes);
-        parseExactTokenNode(iterator, 0); // ";"
+        parseExactTokenNode(iterator, Token.Delimiter.SEMICOLON); // ";"
         initVariables();
         return this;
     }

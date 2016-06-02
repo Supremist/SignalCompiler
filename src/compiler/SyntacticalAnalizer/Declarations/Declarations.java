@@ -8,6 +8,7 @@ import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclaration;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclarations;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableType;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 import java.util.List;
 
@@ -33,20 +34,20 @@ public class Declarations extends TreeNode implements Compilable{
 
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
-        if (iterator.getNext().getId() == 404) { //Keyword "CONST"
+        if (iterator.getCurrent().isEqual(Token.Keyword.CONST)) { //Keyword "CONST"
             parseDeclaration(iterator, constants);
         }
-        if (iterator.getNext().getId() == 405) { //Keyword "VAR"
+        if (iterator.getCurrent().isEqual(Token.Keyword.VAR)) { //Keyword "VAR"
             parseDeclaration(iterator, variable_declarations);
         }
-        if (iterator.getNext().getId() == 416){ //"LABEL"
+        if (iterator.getCurrent().isEqual(Token.Keyword.LABEL)){ //"LABEL"
             parseDeclaration(iterator, labels);
-            parseExactTokenNode(iterator, 0 ); //;
+            parseExactTokenNode(iterator, Token.Delimiter.SEMICOLON); //;
         }
-        if (iterator.getNext().getId() == 412) { //Keyword "DEFFUNC"
+        if (iterator.getCurrent().isEqual(Token.Keyword.DEFFUNC)) { //Keyword "DEFFUNC"
             parseDeclaration(iterator, functions);
         }
-        if (iterator.getNext().getId() == 401) { //Keyword "PROCEDURE"
+        if (iterator.getCurrent().isEqual(Token.Keyword.PROCEDURE)) { //Keyword "PROCEDURE"
             procedures.parse(iterator);
             addChild(procedures);
         }

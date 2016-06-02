@@ -4,9 +4,7 @@ import compiler.lexan.ParseException;
 import compiler.lexan.Position;
 import compiler.lexan.Token;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Created by supremist on 4/12/16.
@@ -23,12 +21,12 @@ public class TokenIterator {
     }
 
     public Token next() throws ParseException{
-        Token result = getNext();
+        Token result = getCurrent();
         current++;
         return result;
     }
 
-    public Token getNext() throws ParseException{
+    public Token getCurrent() throws ParseException{
         if (hasNext())
             return list.get(current+1);
         else if(current>0)

@@ -12,10 +12,10 @@ import compiler.lexan.Token;
 public class UnsignedConstant extends TokenNode {
     @Override
     public TreeNode parse(TokenIterator iterator)throws ParseException {
-        if (iterator.getNext().getType() == Token.Type.CONSTANT)
+        if (iterator.getCurrent().getType() == Token.Type.CONSTANT)
             super.parse(iterator);
         else
-            throw new ParseException("UnsignedConstant expected ", iterator.getNext().getPosition());
+            throw new ParseException("UnsignedConstant expected ", iterator.getCurrent().getPosition());
         return this;
     }
 }

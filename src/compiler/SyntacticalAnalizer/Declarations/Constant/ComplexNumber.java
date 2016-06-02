@@ -6,6 +6,7 @@ import compiler.SyntacticalAnalizer.TokenIterator;
 import compiler.SyntacticalAnalizer.TokenNode;
 import compiler.SyntacticalAnalizer.TreeNode;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 /**
  * Created by supremist on 5/8/16.
@@ -24,7 +25,7 @@ public class ComplexNumber extends TreeNode implements IConstantValue {
         if (!tryParseRightPart(iterator)){
             left = parseChild(iterator, Expression.class);
             if (!tryParseRightPart(iterator))
-                throw new ParseException("Invalid complex number ", iterator.getNext().getPosition());
+                throw new ParseException("Invalid complex number ", iterator.getCurrent().getPosition());
         }
         else
             left = null;
@@ -32,16 +33,16 @@ public class ComplexNumber extends TreeNode implements IConstantValue {
     }
 
     private boolean tryParseRightPart(TokenIterator iterator) throws ParseException{
-        int currentId = iterator.getNext().getId();
-        if(currentId == 3) { // ","
+        Token current = iterator.getCurrent();
+        if(current.isEqual(Token.Delimiter.COMMA)) { // ","
             parseChild(iterator, TokenNode.class);
             right = parseChild(iterator, Expression.class);
         }
-        else if (currentId == 316) { // "$EXP"
+        else if (current.isEqual(Token.Delimiter.EXP)) { // "$EXP"
             parseChild(iterator, TokenNode.class);
-            parseExactTokenNode(iterator, 9); // "("
+            parseExactTokenNode(iterator, Token.Delimiter.OPEN_BRACKET); // "("
             right = parseChild(iterator, Expression.class);
-            parseExactTokenNode(iterator, 10); // ")"
+            parseExactTokenNode(iterator, Token.Delimiter.CLOSE_BRACKET); // ")"
             isExp = true;
         }
         else

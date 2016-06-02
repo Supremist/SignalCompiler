@@ -5,6 +5,7 @@ import compiler.SyntacticalAnalizer.TokenIterator;
 import compiler.SyntacticalAnalizer.TokenNode;
 import compiler.SyntacticalAnalizer.TreeNode;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 /**
  * Created by supremist on 5/8/16.
@@ -17,14 +18,14 @@ public class Constant extends TreeNode implements IConstantValue{
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
         clearChildren();
-        if (iterator.getNext().getId() == 2) { // "-"
+        if (iterator.getCurrent().isEqual(Token.Delimiter.MINUS)) { // "-"
             isMinus = true;
             parseChild(iterator, TokenNode.class);
         }
         else
             isMinus = false;
 
-        if (iterator.getNext().getId() == 8) { // symbol '
+        if (iterator.getCurrent().isEqual(Token.Delimiter.QUOTE)) { // symbol '
             complexConstant = parseChild(iterator, ComplexConstant.class);
             unsignedConstant= null;
         }

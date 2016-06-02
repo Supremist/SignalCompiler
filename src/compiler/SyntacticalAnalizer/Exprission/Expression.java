@@ -7,6 +7,7 @@ import compiler.SyntacticalAnalizer.Declarations.Constant.IConstantValue;
 import compiler.SyntacticalAnalizer.TokenIterator;
 import compiler.SyntacticalAnalizer.TreeNode;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class Expression extends TreeNode implements IConstantValue{
 
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
-        if (iterator.getNext().getId() == 2) { // '-'
+        if (iterator.getCurrent().isEqual(Token.Delimiter.MINUS)) { // '-'
             parseChild(iterator, AddInstruction.class);
             isMinus = true;
         }

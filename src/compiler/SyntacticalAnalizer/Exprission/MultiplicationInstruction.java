@@ -2,6 +2,8 @@ package compiler.SyntacticalAnalizer.Exprission;
 
 import compiler.SyntacticalAnalizer.Declarations.Constant.ConstantValue;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
+
 import java.util.Arrays;
 
 /**
@@ -9,7 +11,11 @@ import java.util.Arrays;
  */
 public class MultiplicationInstruction extends ListedTokenNode implements IInstruction{
 
-    private static Integer [] MULTIPLICATION_INSTRUCTIONS  = {11, 12, 13, 314}; // "*", "/", "&", "MOD"
+    private static Token.TokenEnum[] MULTIPLICATION_INSTRUCTIONS  = {
+            Token.Delimiter.ASTERISK,
+            Token.Delimiter.SLASH,
+            Token.Delimiter.AND,
+            Token.Delimiter.MOD}; // "*", "/", "&", "MOD"
 
     public MultiplicationInstruction() throws ParseException {
         super(Arrays.asList(MULTIPLICATION_INSTRUCTIONS),
@@ -19,16 +25,16 @@ public class MultiplicationInstruction extends ListedTokenNode implements IInstr
 
     @Override
     public ConstantValue calc(ConstantValue value1, ConstantValue value2) throws IllegalArgumentException {
-        if (getToken().getId() == 11){
+        if (getToken().isEqual(Token.Delimiter.ASTERISK)){
             return value1.multiply(value2);
         }
-        else if(getToken().getId() == 12){
+        else if(getToken().isEqual(Token.Delimiter.SLASH)){
             return value1.divide(value2);
         }
-        else if(getToken().getId() == 13){
+        else if(getToken().isEqual(Token.Delimiter.AND)){
             return new ConstantValue(value1.bitAnd(value2));
         }
-        else if(getToken().getId() == 314){
+        else if(getToken().isEqual(Token.Delimiter.MOD)){
             return new ConstantValue(value1.mod(value2));
         }
         return new ConstantValue();
