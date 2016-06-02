@@ -2,10 +2,11 @@ package compiler.SyntacticalAnalizer.Declarations;
 
 import compiler.SyntacticalAnalizer.*;
 import compiler.SyntacticalAnalizer.Declarations.Constant.ConstantDeclaration;
+import compiler.SyntacticalAnalizer.Declarations.Constant.ConstantDeclarations;
 import compiler.SyntacticalAnalizer.Declarations.Constant.UnsignedConstant;
-import compiler.SyntacticalAnalizer.Declarations.Variable.Variable;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclaration;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclarations;
+import compiler.SyntacticalAnalizer.Declarations.Variable.VariableType;
 import compiler.lexan.ParseException;
 
 import java.util.List;
@@ -15,21 +16,15 @@ import java.util.List;
  */
 public class Declarations extends TreeNode implements Compilable{
 
-    private SyntaxList<ConstantDeclaration> constants;
+    private ConstantDeclarations constants;
     private VariableDeclarations variable_declarations;
     private SyntaxList<Function> functions;
     private SyntaxList<Procedure> procedures;
     private SyntaxList<UnsignedConstant> labels;
 
-    private static final String COMPLEX_TEMPLATE =
-            "COMPLEX%1$s STRUCT\n" +
-            "    left %2$s ?\n" +
-            "    right %2$s ?\n" +
-            "COMPLEX%1$s ENDS\n\n";
-
     public Declarations(){
         super();
-        constants = new SyntaxList<ConstantDeclaration>(ConstantDeclaration.class);
+        constants = new ConstantDeclarations();
         variable_declarations = new VariableDeclarations();
         functions = new SyntaxList<Function>(Function.class);
         procedures = new SyntaxList<Procedure>(Procedure.class);
@@ -94,21 +89,20 @@ public class Declarations extends TreeNode implements Compilable{
     @Override
     public StringBuilder toAsmCode() throws CompileException {
         StringBuilder buffer = new StringBuilder();
-        buffer.append(
-                "FLOAT STRUCT\n" +
-                "    mantissa dd ?\n" +
-                "    power db ?\n" +
-                "FLOAT ENDS\n\n" +
-                "BLOCKFLOAT STRUCT\n" +
-                "    power db ?\n" +
-                "    mantissa 10 dup ( dd ?)\n" +
-                "BLOCKFLOAT ENDS\n\n")
-                .append(String.format(COMPLEX_TEMPLATE, "INTEGER", "dw"))
-                .append(String.format(COMPLEX_TEMPLATE, "FLOAT", "FLOAT"))
-                .append(String.format(COMPLEX_TEMPLATE, "BLOCKFLOAT", "BLOCKFLOAT"));
-        buffer.append("DATA SEGMENT\n");
-
-        buffer.append("DATA ENDS\n");
+        for (Function function: functions.getItems()){
+            function.initValues(constants);
+        }
+        buffer.append(VariableType.FLOAT_DECLARATION)
+                .append(VariableType.BLOCKFLOAT_DECLARATION)
+                .append(String.format(VariableType.COMPLEX_DECLARATION_TEMPLATE, "INTEGER", "dw"))
+                .append(String.format(VariableType.COMPLEX_DECLARATION_TEMPLATE, "FLOAT", "FLOAT"))
+                .append(String.format(VariableType.COMPLEX_DECLARATION_TEMPLATE, "BLOCKFLOAT", "BLOCKFLOAT"));
+        buffer.append("DATA SEGMENT\n")
+                .append(constants.toAsmCode())
+                .append(variable_declarations.toAsmCode())
+                .append(functions.toAsmCode())
+                .append(procedures.toAsmCode())
+                .append("DATA ENDS\n");
 
         return buffer;
     }

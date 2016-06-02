@@ -6,10 +6,10 @@ import compiler.lexan.ParseException;
 /**
  * Created by supremist on 5/8/16.
  */
-public class ConstantDeclaration extends NamedTreeNode implements IConstantValue{
+public class ConstantDeclaration extends NamedTreeNode implements IConstantValue, Compilable{
     private Constant constant;
     private ConstantValue value;
-    private boolean isCalculating = false;
+    private boolean isCalculating = false; // flag for detection circular dependency
 
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException{
@@ -21,21 +21,26 @@ public class ConstantDeclaration extends NamedTreeNode implements IConstantValue
         return this;
     }
 
-    public ConstantValue getValue(){
-        return value;
-    }
-
-    public ConstantValue calcConstantValue(ConstantDeclarations declarations) throws CompileException{
+    public ConstantValue getConstantValue(IConstantTable constantTable) throws CompileException{
         if(isCalculating){
-            throw new CompileException("Circular dependency found while calculating constant",
-                    ((TokenNode) getLastChild()).getToken().getPosition());
+            throw new CompileException("Circular dependency found while calculating constant", getPosition());
         }
         if (value == null) {
             isCalculating = true;
-            value = constant.calcConstantValue(declarations);
+            value = constant.getConstantValue(constantTable);
             isCalculating = false;
         }
         return value;
+    }
+
+    @Override
+    public StringBuilder toAsmCode() throws CompileException{
+        StringBuilder buffer = new StringBuilder();
+        if (value == null)
+            throw new CompileException("Constant value not set", getPosition());
+        ConstantValueWrapper compiler = new ConstantValueWrapper(value);
+        buffer.append(super.toAsmCode()).append(" ").append(compiler.toAsmCode());
+        return buffer;
     }
 
     public boolean equals(Object other){

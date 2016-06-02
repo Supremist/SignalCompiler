@@ -45,7 +45,7 @@ public class Main {
                 pr.parse(new TokenIterator(parser.getTokens()));
             }
             catch (ParseException ex){
-                System.out.println(ex.toString());
+                ex.printStackTrace();
             }
             pr.setLevel(0);
             //System.out.print(pr.toStringTree().toString());

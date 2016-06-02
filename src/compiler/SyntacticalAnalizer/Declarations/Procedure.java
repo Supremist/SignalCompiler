@@ -1,17 +1,14 @@
 package compiler.SyntacticalAnalizer.Declarations;
 
+import compiler.SyntacticalAnalizer.*;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclaration;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclarations;
-import compiler.SyntacticalAnalizer.NamedTreeNode;
-import compiler.SyntacticalAnalizer.SyntaxList;
-import compiler.SyntacticalAnalizer.TokenIterator;
-import compiler.SyntacticalAnalizer.TreeNode;
 import compiler.lexan.ParseException;
 
 /**
  * Created by supremist on 5/8/16.
  */
-public class Procedure extends NamedTreeNode {
+public class Procedure extends NamedTreeNode implements Compilable{
 
     private VariableDeclarations parameters;
 
@@ -35,6 +32,14 @@ public class Procedure extends NamedTreeNode {
 
     public VariableDeclarations getParameters(){
         return parameters;
+    }
+
+    @Override
+    public StringBuilder toAsmCode() throws CompileException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("extern ").append(super.toAsmCode())
+                .append("@").append(parameters.getSize()).append(":far\n");
+        return buffer;
     }
 
 }

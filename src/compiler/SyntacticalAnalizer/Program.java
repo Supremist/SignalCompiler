@@ -3,6 +3,7 @@ package compiler.SyntacticalAnalizer;
 import compiler.SyntacticalAnalizer.Declarations.Procedure;
 import compiler.SyntacticalAnalizer.Declarations.Variable.Variable;
 import compiler.lexan.ParseException;
+import compiler.lexan.Token;
 
 import java.util.List;
 

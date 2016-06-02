@@ -44,10 +44,10 @@ public class Constant extends TreeNode implements IConstantValue{
     }
 
     @Override
-    public ConstantValue calcConstantValue(ConstantDeclarations declarations) throws CompileException {
+    public ConstantValue getConstantValue(IConstantTable constantTable) throws CompileException {
         ConstantValue result;
         if(isComplex()){
-            result = complexConstant.getComplexNumber().calcConstantValue(declarations);
+            result = complexConstant.getComplexNumber().getConstantValue(constantTable);
         }
         else {
             result = new ConstantValue(unsignedConstant.getToken().getConstant());

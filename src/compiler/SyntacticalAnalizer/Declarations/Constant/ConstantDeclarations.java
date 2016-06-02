@@ -1,19 +1,17 @@
 package compiler.SyntacticalAnalizer.Declarations.Constant;
 
-import compiler.SyntacticalAnalizer.CompileException;
-import compiler.SyntacticalAnalizer.SyntaxList;
-import compiler.SyntacticalAnalizer.TokenIterator;
-import compiler.SyntacticalAnalizer.TreeNode;
+import compiler.SyntacticalAnalizer.*;
 import compiler.lexan.ParseException;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by supremist on 5/26/16.
  */
-public class ConstantDeclarations extends SyntaxList<ConstantDeclaration> {
+
+
+public class ConstantDeclarations extends SyntaxList<ConstantDeclaration> implements IConstantTable{
 
 
     public ConstantDeclarations(){
@@ -29,23 +27,24 @@ public class ConstantDeclarations extends SyntaxList<ConstantDeclaration> {
 
     private void initConstantList() throws CompileException{
         for(ConstantDeclaration constant: getItems()){
-            constant.calcConstantValue(this);
+            constant.getConstantValue(this);
         }
     }
 
     public ConstantDeclaration getConstantByName(String name){
-        Iterator<ConstantDeclaration> iterator = getItems().listIterator();
-        ConstantDeclaration current = iterator.next();
-        while (iterator.hasNext() && !current.getIdentifier().getToken().getView()
-                .equals(name)){
-            current = iterator.next();
-        }
-        if(current.getIdentifier().getToken().getView()
-                .equals(name)){
-            return current;
-        }
-        return null;
+        List<ConstantDeclaration> result = getItems().stream()
+                .filter(i -> i.getIdentifier().getToken().getView().equals(name))
+                .collect(Collectors.toList());
+        if (!result.isEmpty())
+            return result.get(0);
+        else
+            return null;
     }
 
-
+    @Override
+    public List<String> getNames() {
+        return getItems().stream()
+                .map(i -> i.getIdentifier().getToken().getView())
+                .collect(Collectors.toList());
+    }
 }

@@ -36,7 +36,7 @@ public class VariableDeclaration extends TreeNode {
 
     public void initVariables() throws CompileException{
         variables.clear();
-        ExtendedVariableType varType = new ExtendedVariableType(attributes);
+        VariableType varType = new VariableType(attributes);
         for(NamedTreeNode name: variable_names.getItems())
             variables.add(new Variable(name, varType));
     }

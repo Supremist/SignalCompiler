@@ -7,7 +7,7 @@ import compiler.lexan.ParseException;
 /**
  * Created by supremist on 5/8/16.
  */
-public class Block extends TreeNode {
+public class Block extends TreeNode implements Compilable{
     private Declarations declarations;
     private SyntaxList<Statement> statementList;
 
@@ -34,7 +34,10 @@ public class Block extends TreeNode {
         return declarations;
     }
 
-    public StringBuilder toAsmCode(Grammar grammar){
-        return new StringBuilder();
+    @Override
+    public StringBuilder toAsmCode() throws CompileException {
+        StringBuilder buffer = declarations.toAsmCode();
+
+        return buffer;
     }
 }

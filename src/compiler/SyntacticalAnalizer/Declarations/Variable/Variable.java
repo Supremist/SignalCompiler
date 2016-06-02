@@ -8,9 +8,9 @@ import compiler.SyntacticalAnalizer.*;
 
 public class Variable implements Compilable{
     private NamedTreeNode name;
-    private ExtendedVariableType type;
+    private VariableType type;
 
-    public Variable(NamedTreeNode name, ExtendedVariableType type){
+    public Variable(NamedTreeNode name, VariableType type){
         this.name = name;
         this.type = type;
     }
@@ -19,7 +19,7 @@ public class Variable implements Compilable{
         return name;
     }
 
-    public ExtendedVariableType getType(){
+    public VariableType getType(){
         return type;
     }
 

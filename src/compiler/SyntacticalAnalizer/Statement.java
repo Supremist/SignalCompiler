@@ -8,7 +8,7 @@ import compiler.lexan.ParseException;
  */
 
 public class Statement extends NamedTreeNode{
-    public enum Type {LINK, IN, OUT};
+    public enum Type {LINK, IN, OUT}
 
     private Type type;
     private UnsignedConstant constant;

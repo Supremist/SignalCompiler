@@ -1,8 +1,5 @@
 package compiler.SyntacticalAnalizer.Declarations.Constant;
 
-import compiler.SyntacticalAnalizer.CompileException;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
-
 import static java.lang.Double.NaN;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -10,9 +7,9 @@ import static java.lang.Math.sin;
 /**
  * Created by supremist on 3/23/16.
  */
-public class ConstantValue {
-    public double real;
-    public double imagine;
+public class ConstantValue{
+    private final double real;
+    private final double  imagine;
 
     public ConstantValue(){
         this.real = 0;
@@ -28,6 +25,9 @@ public class ConstantValue {
         this.real = real;
         this.imagine = 0;
     }
+
+    double getReal(){return real;}
+    double getImagine(){return imagine;}
 
     public static ConstantValue fromExp(double ro, double phi){
         return new ConstantValue(ro*cos(phi), ro*sin(phi));
@@ -54,9 +54,17 @@ public class ConstantValue {
         return new ConstantValue(new_real/divider, new_imagine/divider);
     }
 
+    private boolean isInt(double value){
+        return value != NaN && !Double.isInfinite(value)
+                && value == Math.floor(value) && value < Integer.MAX_VALUE;
+    }
+
     public boolean isInteger(){
-        return imagine == 0 && real != NaN && !Double.isInfinite(real)
-                && real == Math.floor(real) && real < Integer.MAX_VALUE;
+        return imagine == 0 && isInt(real);
+    }
+
+    public boolean isComplexInt(){
+        return isInt(real) && isInt(imagine);
     }
 
     public boolean isFloat(){
@@ -98,13 +106,13 @@ public class ConstantValue {
         }
     }
 
-    public ConstantValue readFromStr(String str){
+    public static ConstantValue readFromStr(String str){
         String[] values = str.trim().split(" ");
         if (values.length == 2) {
-            real = Double.parseDouble(values[0]);
-            imagine = Double.parseDouble(values[1]);
+            return new ConstantValue(Double.parseDouble(values[0]),
+                    Double.parseDouble(values[1]));
         }
-        return this;
+        return null;
     }
 
     public String toString(){

@@ -50,15 +50,15 @@ public class ComplexNumber extends TreeNode implements IConstantValue {
     }
 
     @Override
-    public ConstantValue calcConstantValue(ConstantDeclarations declarations) throws CompileException {
-        ConstantValue leftValue  = left.calcConstantValue(declarations);
-        ConstantValue rightValue = right.calcConstantValue(declarations);
+    public ConstantValue getConstantValue(IConstantTable constantTable) throws CompileException {
+        ConstantValue leftValue  = left.getConstantValue(constantTable);
+        ConstantValue rightValue = right.getConstantValue(constantTable);
         if (leftValue.isFloat() && rightValue.isFloat()){
             if(isExp){
-                return ConstantValue.fromExp(leftValue.real, rightValue.real);
+                return ConstantValue.fromExp(leftValue.getReal(), rightValue.getReal());
             }
             else {
-                return new ConstantValue(leftValue.real, rightValue.real);
+                return new ConstantValue(leftValue.getReal(), rightValue.getReal());
             }
         }
         else {

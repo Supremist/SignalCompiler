@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by supremist on 4/13/16.
  */
-public class SyntaxList<T extends TreeNode> extends TreeNode{
+public class SyntaxList<T extends TreeNode> extends TreeNode implements Compilable{
 
     public abstract class EmptySeparator extends TreeNode{}
 
@@ -19,14 +19,14 @@ public class SyntaxList<T extends TreeNode> extends TreeNode{
 
     public SyntaxList(Class<? extends T> itemClass){
         items = new ArrayList<>();
-        this.separatorClass = null;
+        this.separatorClass = EmptySeparator.class;
         this.itemClass = itemClass;
     }
 
     public SyntaxList(Class<? extends T> itemClass, Class<? extends TreeNode> separatorClass){
         this(itemClass);
-        if (separatorClass == EmptySeparator.class){
-            this.separatorClass = null;
+        if (separatorClass == null){
+            this.separatorClass = EmptySeparator.class;
         }
         else {
             this.separatorClass = separatorClass;
@@ -36,7 +36,7 @@ public class SyntaxList<T extends TreeNode> extends TreeNode{
     public boolean isEmpty(){return items.isEmpty();}
 
     @SuppressWarnings("unchecked")
-    private boolean parseItem(TokenIterator iterator){
+    private boolean parseItem(TokenIterator iterator) throws ParseException{
         boolean success = tryParseChild(iterator, itemClass);
         if(success){
             items.add((T) getLastChild());
@@ -45,7 +45,16 @@ public class SyntaxList<T extends TreeNode> extends TreeNode{
     }
 
     private boolean parseSeparator(TokenIterator iterator){
-        return separatorClass == null || tryParseChild(iterator, separatorClass);
+        if (separatorClass != EmptySeparator.class){
+            try{
+                return tryParseChild(iterator, separatorClass);
+            }catch (ParseException ex){
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
     }
 
     public T get(int index){
@@ -56,12 +65,22 @@ public class SyntaxList<T extends TreeNode> extends TreeNode{
 
     @Override
     public TreeNode parse(TokenIterator iterator) throws ParseException {
-        boolean isCorrect = parseItem(iterator);
-        if (!isCorrect)
-            throw new ParseException("List should have at least one element ", iterator.getNext().getPosition());
+        boolean isCorrect;
+        try {
+            isCorrect = parseItem(iterator);
+        } catch (ParseException cause){
+            throw new ParseException("List should have at least one element ",
+                    iterator.getNext().getPosition(), cause);
+        }
         while ( isCorrect && parseSeparator(iterator)){
-            if (!(isCorrect = parseItem(iterator)) && separatorClass != null)
-                throw new ParseException("Next list item expected ", iterator.getNext().getPosition());
+            try{
+                isCorrect = parseItem(iterator);
+            } catch (ParseException cause){
+                isCorrect = false;
+                if (separatorClass != EmptySeparator.class)
+                    throw new ParseException("Next list item expected ",
+                            iterator.getNext().getPosition(), cause);
+            }
         }
         return this;
     }
@@ -75,6 +94,17 @@ public class SyntaxList<T extends TreeNode> extends TreeNode{
     public StringBuilder getXmlAttrs(){
         StringBuilder buffer = super.getXmlAttrs();
         buffer.append(" childType=\"").append(itemClass.getSimpleName()).append("\"");
+        return buffer;
+    }
+
+    @Override
+    public StringBuilder toAsmCode() throws CompileException {
+        StringBuilder buffer = new StringBuilder();
+        for (T item: items){
+            if(item instanceof Compilable){
+                buffer.append(((Compilable) item).toAsmCode());
+            }
+        }
         return buffer;
     }
 }

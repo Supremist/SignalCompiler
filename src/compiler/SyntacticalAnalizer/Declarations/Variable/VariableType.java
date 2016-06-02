@@ -11,13 +11,46 @@ import java.util.List;
 /**
  * Created by supremist on 5/19/16.
  */
-public class ExtendedVariableType implements Compilable{
+public class VariableType implements Compilable{
+
+    public static final String COMPLEX_DECLARATION_TEMPLATE =
+            "COMPLEX%1$s STRUCT\n" +
+                    "    left %2$s ?\n" +
+                    "    right %2$s ?\n" +
+                    "COMPLEX%1$s ENDS\n\n";
+    public static final String COMPLEX_IMPLEMENTATION_TEMPLATE =
+            "COMPLEX%1$s <%2$s, %3$s>\n";
+
+    private static final int INTEGER_SIZE = 2;
+
+    private static final int FLOAT_SIZE = 5;
+    public static final String FLOAT_DECLARATION =
+            "FLOAT STRUCT\n" +
+            "    mantissa dd ?\n" +
+            "    power db ?\n" +
+            "FLOAT ENDS\n\n";
+
+    private static final int MANTISSA_COUNT = 10;
+    private static final int BLOCKFLOAT_SIZE = MANTISSA_COUNT*4+1;
+    public static final String BLOCKFLOAT_DECLARATION =
+            "BLOCKFLOAT STRUCT\n" +
+            "    power db ?\n" +
+            "    mantissa "+ String.valueOf(MANTISSA_COUNT)+" dup ( dd ?)\n" +
+            "BLOCKFLOAT ENDS\n\n";
+
 
     public enum BaseType {INTEGER, FLOAT, BLOCKFLOAT;
+
         public int getSize(){
-            if (this == INTEGER)
-                return 2;
-            return 4;
+            if (this == INTEGER) {
+                return INTEGER_SIZE;
+            }
+            else if (this == FLOAT) {
+                return FLOAT_SIZE;
+            }
+            else{
+                return BLOCKFLOAT_SIZE;
+            }
         }
 
         public String getAsmType(){
@@ -33,7 +66,7 @@ public class ExtendedVariableType implements Compilable{
     private boolean isSignal = false;
     private List<Range> dimensions = null;
 
-    public ExtendedVariableType(SyntaxList<Attribute> attributes) throws CompileException {
+    public VariableType(SyntaxList<Attribute> attributes) throws CompileException {
         for (Attribute attribute: attributes.getItems()){
             Attribute.Type attrType = attribute.getType();
             if(attrType == Attribute.Type.INTEGER ||
@@ -81,6 +114,16 @@ public class ExtendedVariableType implements Compilable{
         else
             buffer.append("?");
         return buffer;
+    }
+
+    public int getSize(){
+        int size = baseType.getSize();
+        if(isComplex)
+            size *= 2;
+        for(Range range: dimensions){
+            size *= range.getLength();
+        }
+        return size;
     }
 
     public boolean isExtern (){return isExt;}

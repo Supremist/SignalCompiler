@@ -1,8 +1,8 @@
 package compiler.SyntacticalAnalizer.Exprission;
 
 import compiler.SyntacticalAnalizer.CompileException;
-import compiler.SyntacticalAnalizer.Declarations.Constant.ConstantDeclarations;
 import compiler.SyntacticalAnalizer.Declarations.Constant.ConstantValue;
+import compiler.SyntacticalAnalizer.Declarations.Constant.IConstantTable;
 import compiler.SyntacticalAnalizer.Declarations.Constant.IConstantValue;
 import compiler.SyntacticalAnalizer.SyntaxList;
 import compiler.SyntacticalAnalizer.TreeNode;
@@ -20,14 +20,14 @@ public class MultipliersList extends SyntaxList<MultiplierItem> implements ICons
     }
 
     @Override
-    public ConstantValue calcConstantValue(ConstantDeclarations declarations) throws CompileException {
+    public ConstantValue getConstantValue(IConstantTable constantTable) throws CompileException {
         Iterator<TreeNode> iterator = getChildren().listIterator();
-        ConstantValue current = ((MultiplierItem) iterator.next()).calcConstantValue(declarations);
+        ConstantValue current = ((MultiplierItem) iterator.next()).getConstantValue(constantTable);
         while (iterator.hasNext()){
             MultiplicationInstruction instruction = (MultiplicationInstruction) iterator.next();
             MultiplierItem multiplier = (MultiplierItem) iterator.next();
             try {
-                current = instruction.calc(current, multiplier.calcConstantValue(declarations));
+                current = instruction.calc(current, multiplier.getConstantValue(constantTable));
             } catch (IllegalArgumentException ex){
                 throw new CompileException(ex.getMessage(), instruction.getToken().getPosition());
             }

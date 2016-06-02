@@ -1,12 +1,15 @@
 package compiler.SyntacticalAnalizer.Exprission;
 
 import compiler.SyntacticalAnalizer.CompileException;
-import compiler.SyntacticalAnalizer.Declarations.Constant.ConstantDeclarations;
 import compiler.SyntacticalAnalizer.Declarations.Constant.ConstantValue;
+import compiler.SyntacticalAnalizer.Declarations.Constant.IConstantTable;
 import compiler.SyntacticalAnalizer.Declarations.Constant.IConstantValue;
 import compiler.SyntacticalAnalizer.TokenIterator;
 import compiler.SyntacticalAnalizer.TreeNode;
 import compiler.lexan.ParseException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by supremist on 5/8/16.
@@ -26,12 +29,20 @@ public class Expression extends TreeNode implements IConstantValue{
         return this;
     }
 
+    public List<MultiplierItem> getItems(){
+        List<MultiplierItem> result = new ArrayList<>();
+        for(MultipliersList multipliersList: summandList.getItems()){
+            result.addAll(multipliersList.getItems());
+        }
+        return result;
+    }
+
 
     @Override
-    public ConstantValue calcConstantValue(ConstantDeclarations declarations) throws CompileException {
+    public ConstantValue getConstantValue(IConstantTable constantTable) throws CompileException {
         if (isMinus)
-            return summandList.calcConstantValue(declarations).unaryMinus();
+            return summandList.getConstantValue(constantTable).unaryMinus();
         else
-            return summandList.calcConstantValue(declarations);
+            return summandList.getConstantValue(constantTable);
     }
 }

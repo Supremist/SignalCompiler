@@ -2,6 +2,9 @@ package compiler.lexan;
 
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static java.lang.Double.NaN;
 
 /**
@@ -9,6 +12,43 @@ import static java.lang.Double.NaN;
  */
 public class Token {
     public enum Type {SINGLE_CHAR, DELIMITER, KEYWORD, CONSTANT, IDENTIFIER}
+
+    public interface TokenEnum{
+        Token makeToken();
+        Type getType();
+    }
+
+    public enum Keyword implements TokenEnum {PROGRAM, PROCEDURE, BEGIN, END, CONST, VAR,
+        SIGNAL, COMPLEX, INTEGER, FLOAT, BLOCKFLOAT, EXT, DEFFUNC, LINK, IN, OUT, LABEL;
+
+        public Token makeToken(){
+            return abstractToken(getType(), this.ordinal());
+        }
+
+        public Token.Type getType(){
+            return Type.KEYWORD;
+        }
+    }
+
+    public enum Delimiter implements TokenEnum {
+        SEMICOLON, PLUS, MINUS, COMMA, COLON, EQUAL, DOUBLE_DOT, DOT,
+        QUOTE, OPEN_BRACKET, CLOSE_BRACKET, ASTERISK, SLASH, AND, MOD, BANG, EXP, BACK_SLASH;
+
+        private static final List<Delimiter> SINGLE_CHAR_LIST = Arrays.asList(
+                SEMICOLON, PLUS, MINUS, COMMA, COLON, EQUAL, DOT,
+                QUOTE, OPEN_BRACKET, CLOSE_BRACKET, ASTERISK, SLASH, AND, BANG, BACK_SLASH);
+
+        public Token makeToken(){
+            return abstractToken(getType(), this.ordinal());
+        }
+
+        public Token.Type getType(){
+            if (SINGLE_CHAR_LIST.contains(this))
+                return Type.SINGLE_CHAR;
+            else
+                return Type.DELIMITER;
+        }
+    }
 
     public static final int SINGLE_CHAR_OFFSET = 0;
     public static final int DELIMITERS_OFFSET = 300;
@@ -39,6 +79,10 @@ public class Token {
         this.position = new Position(position);
         this.index = id - OFFSETS[type.ordinal()];
         this.id = id;
+    }
+
+    public static Token abstractToken(Type type, int index){
+        return new Token("", type, index, new Position());
     }
 
     public static Token fromId(int id){
@@ -106,6 +150,11 @@ public class Token {
         }
         else
             return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return Integer.valueOf(id).hashCode();
     }
 
     public static Token fromString(String line){

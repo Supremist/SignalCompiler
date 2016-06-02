@@ -39,23 +39,22 @@ public abstract class TreeNode implements Serializable{
             iterator.savePosition();
             parse(iterator);
         }
-        catch (CompileException ex){
-            throw ex;
-        }
         catch (ParseException ex){
             iterator.seekBack();
-            return false;
+            throw ex;
         }
         return true;
     }
 
-    public boolean tryParseChild(TokenIterator iterator, Class<? extends TreeNode> childClass){
+    public boolean tryParseChild(TokenIterator iterator, Class<? extends TreeNode> childClass) throws ParseException{
         try {
             TreeNode item = childClass.newInstance();
             if (item.tryParse(iterator))
                 addChild(item);
             else
                 return false;
+        } catch (ParseException ex){
+            throw ex;
         }
         catch (Exception ex){
             ex.printStackTrace();

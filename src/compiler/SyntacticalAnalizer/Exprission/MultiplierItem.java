@@ -5,8 +5,6 @@ import compiler.SyntacticalAnalizer.Declarations.Constant.*;
 import compiler.lexan.ParseException;
 import compiler.lexan.Token;
 
-import java.util.Iterator;
-
 /**
  * Created by supremist on 4/22/16.
  */
@@ -49,19 +47,19 @@ public class MultiplierItem extends NamedTreeNode implements IConstantValue{
     }
 
     @Override
-    public ConstantValue calcConstantValue(ConstantDeclarations declarations) throws CompileException {
+    public ConstantValue getConstantValue(IConstantTable constantTable) throws CompileException {
         if(isConstant()){
             return new ConstantValue(constant.getToken().getConstant());
         }
-        else if (isIdentifier() && !declarations.isEmpty()){
-            ConstantDeclaration current = declarations.getConstantByName(getIdentifier().getToken().getView());
+        else if (isIdentifier() && !constantTable.isEmpty()){
+            IConstantValue current = constantTable.getConstantByName(getIdentifier().getToken().getView());
             if(current != null)
-                return current.calcConstantValue(declarations);
+                return current.getConstantValue(constantTable);
             else
-                throw new CompileException("Identifier is not constant", getIdentifier().getPosition());
+                throw new UnknownIdentifierException("Constant excepted", getIdentifier().getPosition());
         }
         else if(isExpression()){
-            return expression.calcConstantValue(declarations);
+            return expression.getConstantValue(constantTable);
         }
         return new ConstantValue();
     }
