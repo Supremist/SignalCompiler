@@ -23,7 +23,7 @@ public class Procedure extends NamedTreeNode implements Compilable{
         super.parse(iterator);
         if (iterator.getCurrent().isEqual(Token.Delimiter.OPEN_BRACKET)) { // delimiter "("
             parseExactTokenNode(iterator, Token.Delimiter.OPEN_BRACKET); // delimiter "("
-            parameters.parse(iterator);
+            parameters = parseChild(iterator, VariableDeclarations.class);
             parseExactTokenNode(iterator, Token.Delimiter.CLOSE_BRACKET); // delimiter ")"
         }
         parseExactTokenNode(iterator, Token.Delimiter.SEMICOLON); // ";"
@@ -35,9 +35,9 @@ public class Procedure extends NamedTreeNode implements Compilable{
     }
 
     @Override
-    public StringBuilder toAsmCode() throws CompileException {
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException {
         StringBuilder buffer = new StringBuilder();
-        buffer.append("extern ").append(super.toAsmCode())
+        buffer.append("extern ").append(super.toAsmCode(info))
                 .append("@").append(parameters.getSize()).append(":far\n");
         return buffer;
     }

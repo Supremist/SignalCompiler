@@ -97,12 +97,10 @@ public class SyntaxList<T extends TreeNode> extends TreeNode implements Compilab
     }
 
     @Override
-    public StringBuilder toAsmCode() throws CompileException {
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException {
         StringBuilder buffer = new StringBuilder();
         for (T item: items){
-            if(item instanceof Compilable){
-                buffer.append(((Compilable) item).toAsmCode());
-            }
+            buffer.append(item.toAsmCode(info));
         }
         return buffer;
     }

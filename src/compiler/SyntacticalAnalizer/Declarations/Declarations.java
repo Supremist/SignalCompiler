@@ -4,7 +4,6 @@ import compiler.SyntacticalAnalizer.*;
 import compiler.SyntacticalAnalizer.Declarations.Constant.ConstantDeclaration;
 import compiler.SyntacticalAnalizer.Declarations.Constant.ConstantDeclarations;
 import compiler.SyntacticalAnalizer.Declarations.Constant.UnsignedConstant;
-import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclaration;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableDeclarations;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableType;
 import compiler.lexan.ParseException;
@@ -71,12 +70,12 @@ public class Declarations extends TreeNode implements Compilable{
     }
 
 
-    public List<ConstantDeclaration> getConstants(){
-        return constants.getItems();
+    public ConstantDeclarations getConstants(){
+        return constants;
     }
 
-    public List<VariableDeclaration> getVariableDeclarations(){
-        return variable_declarations.getItems();
+    public VariableDeclarations getVariableDeclarations(){
+        return variable_declarations;
     }
 
     public List<Function> getFunctions(){
@@ -88,7 +87,7 @@ public class Declarations extends TreeNode implements Compilable{
     }
 
     @Override
-    public StringBuilder toAsmCode() throws CompileException {
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException {
         StringBuilder buffer = new StringBuilder();
         for (Function function: functions.getItems()){
             function.initValues(constants);
@@ -98,12 +97,13 @@ public class Declarations extends TreeNode implements Compilable{
                 .append(String.format(VariableType.COMPLEX_DECLARATION_TEMPLATE, "INTEGER", "dw"))
                 .append(String.format(VariableType.COMPLEX_DECLARATION_TEMPLATE, "FLOAT", "FLOAT"))
                 .append(String.format(VariableType.COMPLEX_DECLARATION_TEMPLATE, "BLOCKFLOAT", "BLOCKFLOAT"));
-        buffer.append("DATA SEGMENT\n")
-                .append(constants.toAsmCode())
-                .append(variable_declarations.toAsmCode())
-                .append(functions.toAsmCode())
-                .append(procedures.toAsmCode())
-                .append("DATA ENDS\n");
+        buffer.append(info.getProgramName().getView())
+                .append("DATA SEGMENT\n")
+                .append(constants.toAsmCode(info))
+                .append(variable_declarations.toAsmCode(info))
+                .append(functions.toAsmCode(info))
+                .append(procedures.toAsmCode(info))
+                .append(info.getProgramName().getView()).append("DATA ENDS\n");
 
         return buffer;
     }

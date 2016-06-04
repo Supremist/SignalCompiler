@@ -35,9 +35,7 @@ public class Block extends TreeNode implements Compilable{
     }
 
     @Override
-    public StringBuilder toAsmCode() throws CompileException {
-        StringBuilder buffer = declarations.toAsmCode();
-
-        return buffer;
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException {
+        return statementList.toAsmCode(info);
     }
 }

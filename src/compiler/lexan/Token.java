@@ -36,7 +36,7 @@ public class Token {
 
     public enum Delimiter implements TokenEnum {
         SEMICOLON, PLUS, MINUS, COMMA, COLON, EQUAL, DOUBLE_DOT, DOT,
-        QUOTE, OPEN_BRACKET, CLOSE_BRACKET, ASTERISK, SLASH, AND, MOD, BANG, EXP, BACK_SLASH;
+        QUOTE, OPEN_BRACKET, CLOSE_BRACKET, ASTERISK, SLASH, AND, MOD, BANG, EXP, BACK_SLASH, XOR;
 
         private static final List<Delimiter> SINGLE_CHAR_LIST = Arrays.asList(
                 SEMICOLON, PLUS, MINUS, COMMA, COLON, EQUAL, DOT,

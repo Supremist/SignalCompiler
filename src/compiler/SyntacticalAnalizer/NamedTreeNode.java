@@ -42,7 +42,10 @@ public class NamedTreeNode extends TreeNode implements  Compilable {
     }
 
     @Override
-    public StringBuilder toAsmCode() throws CompileException {
-        return new StringBuilder().append(identifier.getToken().getView());
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException {
+        if (identifier != null)
+            return new StringBuilder().append(identifier.getToken().getView());
+        else
+            return new StringBuilder();
     }
 }

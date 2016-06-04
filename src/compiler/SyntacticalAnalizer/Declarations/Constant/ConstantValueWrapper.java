@@ -1,6 +1,7 @@
 package compiler.SyntacticalAnalizer.Declarations.Constant;
 
 import compiler.SyntacticalAnalizer.Compilable;
+import compiler.SyntacticalAnalizer.CompilationInfo;
 import compiler.SyntacticalAnalizer.CompileException;
 import compiler.SyntacticalAnalizer.Declarations.Variable.VariableType;
 
@@ -35,7 +36,7 @@ public class ConstantValueWrapper implements Compilable, IConstantValue{
     }
 
     @Override
-    public StringBuilder toAsmCode() throws CompileException {
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException {
         StringBuilder buffer = new StringBuilder();
         if (mValue.isInteger()){
             buffer.append(VariableType.BaseType.INTEGER.getAsmType()).append(" ")
@@ -60,6 +61,11 @@ public class ConstantValueWrapper implements Compilable, IConstantValue{
                     String.valueOf(mValue.getImagine())));
         }
         return buffer;
+    }
+
+    @Override
+    public void Compile(CompilationInfo info) throws CompileException {
+
     }
 
 

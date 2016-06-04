@@ -32,7 +32,6 @@ public class VariableDeclaration extends TreeNode {
         attributes.parse(iterator);
         addChild(attributes);
         parseExactTokenNode(iterator, Token.Delimiter.SEMICOLON); // ";"
-        initVariables();
         return this;
     }
 
@@ -50,5 +49,14 @@ public class VariableDeclaration extends TreeNode {
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    @Override
+    public void Compile(CompilationInfo info) throws CompileException{
+        super.Compile(info);
+        initVariables();
+        for(Variable variable: variables){
+            variable.Compile(info);
+        }
     }
 }

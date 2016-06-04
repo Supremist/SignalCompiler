@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class AddInstruction extends ListedTokenNode implements IInstruction{
 
     private static final Token.TokenEnum [] ADD_INSTRUCTIONS  = {Token.Delimiter.PLUS,
-            Token.Delimiter.MINUS, Token.Delimiter.BANG}; // "+", "-", "!"
+            Token.Delimiter.MINUS, Token.Delimiter.BANG, Token.Delimiter.XOR}; // "+", "-", "!", "XOR"
 
     public AddInstruction() throws ParseException {
         super(Arrays.asList(ADD_INSTRUCTIONS),
@@ -32,6 +32,9 @@ public class AddInstruction extends ListedTokenNode implements IInstruction{
         }
         else if(getToken().isEqual(Token.Delimiter.BANG)){
             return new ConstantValue(value1.bitOr(value2));
+        }
+        else if(getToken().isEqual(Token.Delimiter.XOR)){
+            return new ConstantValue(value1.bitXor(value2));
         }
         return new ConstantValue();
     }

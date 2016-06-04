@@ -93,6 +93,15 @@ public class ConstantValue{
         }
     }
 
+    public int bitXor(ConstantValue value) throws IllegalArgumentException{
+        if(this.isInteger() && value.isInteger()){
+            return this.getInteger() ^ value.getInteger();
+        }
+        else{
+            throw new IllegalArgumentException("Int type expected");
+        }
+    }
+
     public ConstantValue unaryMinus(){
         return new ConstantValue(-this.real, -this.imagine);
     }

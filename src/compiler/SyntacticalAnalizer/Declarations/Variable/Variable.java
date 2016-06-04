@@ -1,6 +1,7 @@
 package compiler.SyntacticalAnalizer.Declarations.Variable;
 
 import compiler.SyntacticalAnalizer.*;
+import compiler.lexan.Token;
 
 /**
  * Created by supremist on 5/14/16.
@@ -24,16 +25,36 @@ public class Variable implements Compilable{
     }
 
     public int getSize(){
-        return 4; //TODO add realization
+        return type.getSize();
     }
 
     @Override
-    public StringBuilder toAsmCode() throws CompileException {
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException {
         StringBuilder buffer = new StringBuilder();
-        if(type.isExtern())
+        if (type.isExtern())
             buffer.append("extern ");
-        buffer.append(name.toAsmCode()).append(" ")
-                .append(type.toAsmCode());
+        buffer.append(name.toAsmCode(info)).append(" ")
+                .append(type.toAsmCode(info));
+        buffer.append("\n");
         return buffer;
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if(other instanceof Variable){
+            return  this.name.getIdentifier().getToken().equals(
+                    ((Variable) other).getName().getIdentifier().getToken());
+        }
+        else if(other instanceof Token){
+            return this.name.getIdentifier().getToken().equals(other);
+        }
+        else {
+            return false;
+        }
+    }
+
+    @Override
+    public void Compile(CompilationInfo info) throws CompileException{
+        info.addIdentifier(name.getIdentifier().getToken());
     }
 }

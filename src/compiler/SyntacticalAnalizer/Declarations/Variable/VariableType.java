@@ -1,9 +1,6 @@
 package compiler.SyntacticalAnalizer.Declarations.Variable;
 
-import compiler.SyntacticalAnalizer.Compilable;
-import compiler.SyntacticalAnalizer.CompileException;
-import compiler.SyntacticalAnalizer.SyntaxList;
-import compiler.SyntacticalAnalizer.TokenNode;
+import compiler.SyntacticalAnalizer.*;
 import compiler.lexan.Position;
 
 import java.util.List;
@@ -95,7 +92,7 @@ public class VariableType implements Compilable{
     }
 
     @Override
-    public StringBuilder toAsmCode() throws CompileException {
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException {
         StringBuilder buffer = new StringBuilder();
         String base;
         if (isComplex)
@@ -116,14 +113,25 @@ public class VariableType implements Compilable{
         return buffer;
     }
 
+    @Override
+    public void Compile(CompilationInfo info) throws CompileException {
+
+    }
+
     public int getSize(){
         int size = baseType.getSize();
         if(isComplex)
             size *= 2;
-        for(Range range: dimensions){
-            size *= range.getLength();
+        if (dimensions != null) {
+            for (Range range : dimensions) {
+                size *= range.getLength();
+            }
         }
         return size;
+    }
+
+    public boolean isSignal(){
+        return isSignal;
     }
 
     public boolean isExtern (){return isExt;}

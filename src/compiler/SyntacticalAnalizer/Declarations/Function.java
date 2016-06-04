@@ -1,10 +1,8 @@
 package compiler.SyntacticalAnalizer.Declarations;
 
-import com.sun.corba.se.impl.oa.toa.TOA;
 import compiler.SyntacticalAnalizer.*;
 import compiler.SyntacticalAnalizer.Declarations.Constant.*;
 import compiler.SyntacticalAnalizer.Exprission.Expression;
-import compiler.SyntacticalAnalizer.Exprission.UnknownIdentifierException;
 import compiler.lexan.ParseException;
 import compiler.lexan.Token;
 
@@ -55,8 +53,8 @@ public class Function extends NamedTreeNode implements Compilable{
             throw new CompileException("Min bound bigger then max bound", minBound.getPosition());
         }
 
-        Set<String> expressionItems = expression.getItems().stream()
-                .map(i -> i.getIdentifier().getToken().getView())
+        Set<String> expressionItems = expression.getIdentifiers().stream()
+                .map(i -> i.getView())
                 .collect(Collectors.toSet());
         expressionItems.removeAll(constants.getNames());
 
@@ -76,14 +74,21 @@ public class Function extends NamedTreeNode implements Compilable{
         }
     }
 
+    public void Compile(CompilationInfo info) throws CompileException{
+        info.addIdentifier(getIdentifier().getToken());
+        initValues(info.getDeclarations().getConstants());
+        super.Compile(info);
+    }
+
     @Override
-    public StringBuilder toAsmCode() throws CompileException {
-        StringBuilder buffer = super.toAsmCode();
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException {
+        StringBuilder buffer = super.toAsmCode(info);
         Iterator<ConstantValue> iterator = values.listIterator();
         buffer.append(" ").append(new ConstantValueWrapper(iterator.next())
-                .toAsmCode().toString().replace("\n", ""));
+                .toAsmCode(info).toString().replace("\n", ""));
         while (iterator.hasNext()){
-            buffer.append(new ConstantValueWrapper(iterator.next()).getCode());
+            buffer.append(", ")
+                    .append(new ConstantValueWrapper(iterator.next()).getCode());
         }
         buffer.append("\n");
         return buffer;

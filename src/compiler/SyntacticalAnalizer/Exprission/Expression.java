@@ -30,10 +30,14 @@ public class Expression extends TreeNode implements IConstantValue{
         return this;
     }
 
-    public List<MultiplierItem> getItems(){
-        List<MultiplierItem> result = new ArrayList<>();
+    public List<Token> getIdentifiers(){
+        List<Token> result = new ArrayList<>();
         for(MultipliersList multipliersList: summandList.getItems()){
-            result.addAll(multipliersList.getItems());
+            for (MultiplierItem item: multipliersList.getItems()){
+                if(item.getIdentifier() != null){
+                    result.add(item.getIdentifier().getToken());
+                }
+            }
         }
         return result;
     }

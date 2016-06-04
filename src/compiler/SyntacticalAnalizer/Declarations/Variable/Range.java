@@ -33,7 +33,7 @@ public class Range extends TreeNode {
 
     public Token getLeft(){return leftToken;}
     public Token getRight(){return rightToken;}
-    public int getLength(){return  rightToken.getInteger() - leftToken.getInteger();}
+    public int getLength(){return  rightToken.getInteger() - leftToken.getInteger() + 1;}
 
     @Override
     public String toString() {

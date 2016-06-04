@@ -35,12 +35,18 @@ public class ConstantDeclaration extends NamedTreeNode implements IConstantValue
     }
 
     @Override
-    public StringBuilder toAsmCode() throws CompileException{
+    public void Compile(CompilationInfo info) throws CompileException{
+        info.addIdentifier(getIdentifier().getToken());
+        super.Compile(info);
+    }
+
+    @Override
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException{
         StringBuilder buffer = new StringBuilder();
         if (value == null)
             throw new CompileException("Constant value not set", getPosition());
         ConstantValueWrapper compiler = new ConstantValueWrapper(value);
-        buffer.append(super.toAsmCode()).append(" ").append(compiler.toAsmCode());
+        buffer.append(super.toAsmCode(info)).append(" ").append(compiler.toAsmCode(info));
         return buffer;
     }
 

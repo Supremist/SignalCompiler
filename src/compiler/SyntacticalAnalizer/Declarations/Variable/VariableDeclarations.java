@@ -18,13 +18,6 @@ public class VariableDeclarations extends SyntaxList<VariableDeclaration> implem
         variableList = new ArrayList<>();
     }
 
-    @Override
-    public TreeNode parse(TokenIterator iterator) throws ParseException {
-        super.parse(iterator);
-        initVariableList();
-        return this;
-    }
-
     private void initVariableList(){
         variableList.clear();
         size = 0;
@@ -48,13 +41,9 @@ public class VariableDeclarations extends SyntaxList<VariableDeclaration> implem
         return size;
     }
 
-
-    @Override
-    public StringBuilder toAsmCode() throws CompileException {
-        StringBuilder buffer = new StringBuilder();
-        for (Variable variable: variableList){
-            buffer.append(variable.toAsmCode()).append("\n");
-        }
-        return buffer;
+    public void Compile(CompilationInfo info) throws CompileException{
+        super.Compile(info);
+        initVariableList();
     }
+
 }

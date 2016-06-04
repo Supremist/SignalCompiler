@@ -1,7 +1,5 @@
 package compiler.SyntacticalAnalizer;
 
-import com.sun.deploy.util.StringUtils;
-import compiler.lexan.Grammar;
 import compiler.lexan.ParseException;
 import compiler.lexan.Position;
 import compiler.lexan.Token;
@@ -15,7 +13,7 @@ import java.util.List;
  * Created by supremist on 4/10/16.
  */
 
-public abstract class TreeNode implements Serializable{
+public abstract class TreeNode implements Serializable, Compilable{
     private List<TreeNode> children;
     private TreeNode parent;
     private int level;
@@ -148,5 +146,15 @@ public abstract class TreeNode implements Serializable{
     public int getLevel(){return level;}
     public List<TreeNode> getChildren(){return children;}
     public TreeNode getLastChild(){return children.get(children.size()-1);}
+
+    public StringBuilder toAsmCode(CompilationInfo info) throws CompileException{
+        return new StringBuilder();
+    }
+
+    public void Compile(CompilationInfo info) throws CompileException{
+        for(TreeNode child: children){
+            child.Compile(info);
+        }
+    }
 
 }

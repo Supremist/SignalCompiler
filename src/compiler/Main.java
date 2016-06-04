@@ -1,4 +1,5 @@
 package compiler;
+import compiler.SyntacticalAnalizer.CompilationInfo;
 import compiler.SyntacticalAnalizer.Program;
 import compiler.SyntacticalAnalizer.TokenIterator;
 import compiler.lexan.Grammar;
@@ -41,15 +42,18 @@ public class Main {
                     new FileOutputStream(output + "identifiers.txt", false));
 
             Program pr = new Program();
+            CompilationInfo info = new CompilationInfo();
             try {
                 pr.parse(new TokenIterator(parser.getTokens()));
+                pr.Compile(info);
             }
             catch (ParseException ex){
                 ex.printStackTrace();
             }
             pr.setLevel(0);
             //System.out.print(pr.toStringTree().toString());
-            System.out.print(pr.toXmlView().toString());
+            //System.out.print(pr.toXmlView().toString());
+            System.out.println(pr.toAsmCode(info));
         }
         catch (Exception ex){
             ex.printStackTrace();
